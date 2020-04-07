@@ -6,8 +6,8 @@ namespace MorphologicalAnalysis
 {
     public class MorphologicalParse
     {
-        protected readonly List<InflectionalGroup> InflectionalGroups;
-        protected readonly Word Root;
+        protected List<InflectionalGroup> inflectionalGroups;
+        protected Word root;
 
         /**
          * <summary>An empty constructor of {@link MorphologicalParse} class.</summary>
@@ -23,7 +23,7 @@ namespace MorphologicalAnalysis
          */
         public Word GetWord()
         {
-            return Root;
+            return root;
         }
 
         /**
@@ -64,28 +64,28 @@ namespace MorphologicalAnalysis
             }
 
             iGs.Add(st);
-            InflectionalGroups = new List<InflectionalGroup>();
+            inflectionalGroups = new List<InflectionalGroup>();
             if (iGs[0] == "++Punc")
             {
-                Root = new Word("+");
-                InflectionalGroups.Add(new InflectionalGroup("Punc"));
+                root = new Word("+");
+                inflectionalGroups.Add(new InflectionalGroup("Punc"));
             }
             else
             {
                 if (iGs[0].IndexOf('+') != -1)
                 {
-                    Root = new Word(iGs[0].Substring(0, iGs[0].IndexOf('+')));
-                    InflectionalGroups.Add(new InflectionalGroup(iGs[0].Substring(iGs[0].IndexOf('+') + 1)));
+                    root = new Word(iGs[0].Substring(0, iGs[0].IndexOf('+')));
+                    inflectionalGroups.Add(new InflectionalGroup(iGs[0].Substring(iGs[0].IndexOf('+') + 1)));
                 }
                 else
                 {
-                    Root = new Word(iGs[0]);
+                    root = new Word(iGs[0]);
                 }
 
                 int i;
                 for (i = 1; i < iGs.Count; i++)
                 {
-                    InflectionalGroups.Add(new InflectionalGroup(iGs[i]));
+                    inflectionalGroups.Add(new InflectionalGroup(iGs[i]));
                 }
             }
         }
@@ -109,17 +109,17 @@ namespace MorphologicalAnalysis
         public MorphologicalParse(List<string> inflectionalGroups)
         {
             int i;
-            this.InflectionalGroups = new List<InflectionalGroup>();
+            this.inflectionalGroups = new List<InflectionalGroup>();
             if (inflectionalGroups[0].IndexOf('+') != -1)
             {
-                Root = new Word(inflectionalGroups[0].Substring(0, inflectionalGroups[0].IndexOf('+')));
-                this.InflectionalGroups.Add(new InflectionalGroup(inflectionalGroups[0]
+                root = new Word(inflectionalGroups[0].Substring(0, inflectionalGroups[0].IndexOf('+')));
+                this.inflectionalGroups.Add(new InflectionalGroup(inflectionalGroups[0]
                     .Substring(inflectionalGroups[0].IndexOf('+') + 1)));
             }
 
             for (i = 1; i < inflectionalGroups.Count; i++)
             {
-                this.InflectionalGroups.Add(new InflectionalGroup(inflectionalGroups[i]));
+                this.inflectionalGroups.Add(new InflectionalGroup(inflectionalGroups[i]));
             }
         }
 
@@ -131,10 +131,10 @@ namespace MorphologicalAnalysis
          */
         public string GetTransitionList()
         {
-            var result = InflectionalGroups[0].ToString();
-            for (var i = 1; i < InflectionalGroups.Count; i++)
+            var result = inflectionalGroups[0].ToString();
+            for (var i = 1; i < inflectionalGroups.Count; i++)
             {
-                result = result + "+" + InflectionalGroups[i];
+                result = result + "+" + inflectionalGroups[i];
             }
 
             return result;
@@ -152,10 +152,10 @@ namespace MorphologicalAnalysis
         {
             if (index == 0)
             {
-                return Root.GetName() + "+" + InflectionalGroups[0];
+                return root.GetName() + "+" + inflectionalGroups[0];
             }
 
-            return InflectionalGroups[index].ToString();
+            return inflectionalGroups[index].ToString();
         }
 
         /**
@@ -167,7 +167,7 @@ namespace MorphologicalAnalysis
          */
         public InflectionalGroup GetInflectionalGroup(int index)
         {
-            return InflectionalGroups[index];
+            return inflectionalGroups[index];
         }
 
         /**
@@ -177,7 +177,7 @@ namespace MorphologicalAnalysis
          */
         public InflectionalGroup GetLastInflectionalGroup()
         {
-            return GetInflectionalGroup(InflectionalGroups.Count - 1);
+            return GetInflectionalGroup(inflectionalGroups.Count - 1);
         }
 
         /**
@@ -192,10 +192,10 @@ namespace MorphologicalAnalysis
             var size = 1;
             if (index == 0)
             {
-                return Root.GetName();
+                return root.GetName();
             }
 
-            foreach (var group in InflectionalGroups)
+            foreach (var group in inflectionalGroups)
             {
                 if (index < size + group.Size())
                 {
@@ -217,7 +217,7 @@ namespace MorphologicalAnalysis
         public int TagSize()
         {
             var size = 1;
-            foreach (var group in InflectionalGroups)
+            foreach (var group in inflectionalGroups)
             {
                 size += group.Size();
             }
@@ -232,7 +232,7 @@ namespace MorphologicalAnalysis
          */
         public int Size()
         {
-            return InflectionalGroups.Count;
+            return inflectionalGroups.Count;
         }
 
         /**
@@ -242,7 +242,7 @@ namespace MorphologicalAnalysis
          */
         public InflectionalGroup FirstInflectionalGroup()
         {
-            return InflectionalGroups[0];
+            return inflectionalGroups[0];
         }
 
         /**
@@ -252,7 +252,7 @@ namespace MorphologicalAnalysis
          */
         public InflectionalGroup LastInflectionalGroup()
         {
-            return InflectionalGroups[InflectionalGroups.Count - 1];
+            return inflectionalGroups[inflectionalGroups.Count - 1];
         }
 
         /**
@@ -262,7 +262,7 @@ namespace MorphologicalAnalysis
          */
         public Word GetWordWithPos()
         {
-            return new Word(Root.GetName() + "+" + InflectionalGroup.GetTag(FirstInflectionalGroup().GetTag(0)));
+            return new Word(root.GetName() + "+" + InflectionalGroup.GetTag(FirstInflectionalGroup().GetTag(0)));
         }
 
         /**
@@ -333,7 +333,7 @@ namespace MorphologicalAnalysis
          */
         public bool IsCapitalWord()
         {
-            return char.IsUpper(Root.GetName()[0]);
+            return char.IsUpper(root.GetName()[0]);
         }
 
         /**
@@ -514,7 +514,7 @@ namespace MorphologicalAnalysis
          */
         public bool IsPlural()
         {
-            foreach (var inflectionalGroup in InflectionalGroups)
+            foreach (var inflectionalGroup in inflectionalGroups)
             {
                 if (inflectionalGroup.ContainsPlural())
                 {
@@ -532,7 +532,7 @@ namespace MorphologicalAnalysis
          */
         public bool IsAuxiliary()
         {
-            return Root.GetName() == "et" || Root.GetName() == "ol" || Root.GetName() == "yap";
+            return root.GetName() == "et" || root.GetName() == "ol" || root.GetName() == "yap";
         }
 
         /**
@@ -544,7 +544,7 @@ namespace MorphologicalAnalysis
          */
         public bool ContainsTag(MorphologicalTag tag)
         {
-            foreach (var inflectionalGroup in InflectionalGroups) {
+            foreach (var inflectionalGroup in inflectionalGroups) {
                 if (inflectionalGroup.ContainsTag(tag))
                 {
                     return true;
@@ -631,9 +631,9 @@ namespace MorphologicalAnalysis
          */
         public override string ToString()
         {
-            var result = Root.GetName() + "+" + InflectionalGroups[0];
-            for (var i = 1; i < InflectionalGroups.Count; i++)
-                result = result + "^DB+" + InflectionalGroups[i];
+            var result = root.GetName() + "+" + inflectionalGroups[0];
+            for (var i = 1; i < inflectionalGroups.Count; i++)
+                result = result + "^DB+" + inflectionalGroups[i];
             return result;
         }
     }
