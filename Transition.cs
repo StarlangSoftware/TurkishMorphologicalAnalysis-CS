@@ -370,14 +370,13 @@ namespace MorphologicalAnalysis
                 return true;
             }
 
-            if (root.IsVerb() && root.VerbSoftenDuringSuffixation() && (_with.StartsWith("Hyor") ||
-                                                                        _with == "yHs") ||
+            if (root.IsVerb() && root.VerbSoftenDuringSuffixation() && (_with.StartsWith("Hyor") || _with == "yHs" ||
                 _with == "yAn" || _with == "yA" || _with.StartsWith("yAcAk") || _with == "yAsH" || _with == "yHncA" ||
                 _with == "yHp" || _with == "yAlH" || _with == "yArAk" || _with == "yAdur" || _with == "yHver" ||
                 _with == "yAgel" || _with == "yAgor" || _with == "yAbil" || _with == "yAyaz" || _with == "yAkal" ||
                 _with == "yAkoy" || _with == "yAmA" || _with == "yHcH" || _with == "HCH" ||
                 _with.StartsWith("Hr") || _with == "Hs" || _with == "Hn" || _with == "yHn" || _with == "yHnHz" ||
-                _with.StartsWith("Ar") || _with == "Hl")
+                _with.StartsWith("Ar") || _with == "Hl"))
             {
                 return true;
             }

@@ -788,8 +788,8 @@ namespace MorphologicalAnalysis
             foreach (var currentTransition in _finiteStateMachine.GetTransitions(currentState))
             {
                 if (currentTransition.TransitionPossible(currentFsmParse) &&
-                    (currentSurfaceForm.CompareTo(root.GetName()) != 0 ||
-                     (currentSurfaceForm.CompareTo(root.GetName()) == 0 &&
+                    (!string.Equals(currentSurfaceForm, root.GetName(), StringComparison.Ordinal) ||
+                     (string.Equals(currentSurfaceForm, root.GetName(), StringComparison.Ordinal) &&
                       currentTransition.TransitionPossible(root, currentState))))
                 {
                     var tmp =
@@ -825,8 +825,8 @@ namespace MorphologicalAnalysis
             {
                 if (currentTransition.TransitionPossible(currentFsmParse.GetSurfaceForm(), surfaceForm) &&
                     currentTransition.TransitionPossible(currentFsmParse) &&
-                    (currentSurfaceForm.CompareTo(root.GetName()) != 0 ||
-                     (currentSurfaceForm.CompareTo(root.GetName()) == 0 &&
+                    (!string.Equals(currentSurfaceForm, root.GetName(), StringComparison.Ordinal) ||
+                     (string.Equals(currentSurfaceForm, root.GetName(), StringComparison.Ordinal) &&
                       currentTransition.TransitionPossible(root, currentState))))
                 {
                     var tmp =
@@ -861,7 +861,7 @@ namespace MorphologicalAnalysis
                 var root = (TxtWord) currentFsmParse.GetWord();
                 var currentState = currentFsmParse.GetFinalSuffix();
                 var currentSurfaceForm = currentFsmParse.GetSurfaceForm();
-                if (currentState.IsEndState() && currentSurfaceForm.CompareTo(surfaceForm) == 0)
+                if (currentState.IsEndState() && string.Equals(currentSurfaceForm, surfaceForm, StringComparison.Ordinal))
                 {
                     return true;
                 }
@@ -934,7 +934,7 @@ namespace MorphologicalAnalysis
                 var root = (TxtWord) currentFsmParse.GetWord();
                 var currentState = currentFsmParse.GetFinalSuffix();
                 var currentSurfaceForm = currentFsmParse.GetSurfaceForm();
-                if (currentState.IsEndState() && currentSurfaceForm.CompareTo(surfaceForm) == 0)
+                if (currentState.IsEndState() && string.Equals(currentSurfaceForm, surfaceForm, StringComparison.Ordinal))
                 {
                     var exists = false;
                     int i;
@@ -1193,8 +1193,12 @@ namespace MorphologicalAnalysis
 
         private bool PatternMatches(string expr, string value)
         {
-            var p = _mostUsedPatterns[expr];
-            if (p == null)
+            Regex p;
+            if (_mostUsedPatterns.ContainsKey(expr))
+            {
+                p = _mostUsedPatterns[expr];
+            }
+            else
             {
                 p = new Regex(expr);
                 _mostUsedPatterns[expr] = p;

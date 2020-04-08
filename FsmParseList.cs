@@ -45,7 +45,7 @@ namespace MorphologicalAnalysis
          * <param name="index">Integer input.</param>
          * <returns>the item of fsmParses {@link List} at given index.</returns>
          */
-        public FsmParse FetFsmParse(int index)
+        public FsmParse GetFsmParse(int index)
         {
             return _fsmParses[index];
         }
