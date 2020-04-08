@@ -42,14 +42,14 @@ Creating a morphological analyzer with different cache size, dictionary or finit
 
 ## Word level morphological analysis
 
-For morphological analysis,  `morphologicalAnalysis(String word)` method of `FsmMorphologicalAnalyzer` is used. This returns `FsmParseList` object. 
+For morphological analysis,  `MorphologicalAnalysis(String word)` method of `FsmMorphologicalAnalyzer` is used. This returns `FsmParseList` object. 
 
 
     FsmMorphologicalAnalyzer fsm = new FsmMorphologicalAnalyzer();
-    String word = "yarına";
-    FsmParseList fsmParseList = fsm.morphologicalAnalysis(word);
-    for (int i = 0; i < fsmParseList.size(); i++){
-      System.out.println(fsmParseList.getFsmParse(i).transitionList();
+    string word = "yarına";
+    FsmParseList fsmParseList = fsm.MorphologicalAnalysis(word);
+    for (int i = 0; i < fsmParseList.Size(); i++){
+      Console.WriteLine(fsmParseList.GetFsmParse(i).TransitionList();
     } 
       
 Output
@@ -61,8 +61,8 @@ Output
     
 From `FsmParseList`, a single `FsmParse` can be obtained as follows:
 
-    FsmParse parse = fsmParseList.getFsmParse(0);
-    System.out.println(parse.transitionList();   
+    FsmParse parse = fsmParseList.GetFsmParse(0);
+    Console.WriteLine(parse.TransitionList();   
     
 Output    
     
@@ -73,13 +73,13 @@ Output
 
     FsmMorphologicalAnalyzer fsm = new FsmMorphologicalAnalyzer();
     Sentence sentence = new Sentence("Yarın doktora gidecekler");
-    FsmParseList[] parseLists = fsm.morphologicalAnalysis(sentence);
-    for(int i = 0; i < parseLists.length; i++){
-        for(int j = 0; j < parseLists[i].size(); j++){
-            FsmParse parse = parseLists[i].getFsmParse(j);
-            System.out.println(parse.transitionList());
+    FsmParseList[] parseLists = fsm.MorphologicalAnalysis(sentence);
+    for(int i = 0; i < parseLists.Length; i++){
+        for(int j = 0; j < parseLists[i].Size(); j++){
+            FsmParse parse = parseLists[i].GetFsmParse(j);
+            Console.WriteLine(parse.TransitionList());
         }
-        System.out.println("-----------------");
+        Console.WriteLine("-----------------");
     }
     
 Output
