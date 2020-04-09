@@ -94,6 +94,24 @@ namespace MorphologicalAnalysis
                 }
             }
         }
+        
+        /**
+         * <summary>The getParseWithLongestRootWord method returns the parse with the longest root word. If more than one parse has the
+         * longest root word, the first parse with that root is returned.</summary>
+         *
+         * <returns>FsmParse Parse with the longest root word.</returns>
+         */
+        public FsmParse GetParseWithLongestRootWord(){
+            var maxLength = -1;
+            FsmParse bestParse = null;
+            foreach (var currentParse in _fsmParses) {
+                if (currentParse.GetWord().GetName().Length > maxLength) {
+                    maxLength = currentParse.GetWord().GetName().Length;
+                    bestParse = currentParse;
+                }
+            }
+            return bestParse;
+        }
 
         /**
          * <summary>The reduceToParsesWithSameRoot method takes a {@link string} currentWithPos as an input and loops i times till
