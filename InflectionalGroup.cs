@@ -36,7 +36,7 @@ namespace MorphologicalAnalysis
             "PERS", "FRACTION", "HASHTAG", "EMAIL", "DATE", "NONE"
         };
 
-        private static readonly MorphologicalTag[] MorphoTags =
+        public static readonly MorphologicalTag[] MorphoTags =
         {
             MorphologicalTag.NOUN, MorphologicalTag.ADVERB, MorphologicalTag.ADJECTIVE,
             MorphologicalTag.VERB, MorphologicalTag.A1SG, MorphologicalTag.A2SG, MorphologicalTag.A3SG, MorphologicalTag
