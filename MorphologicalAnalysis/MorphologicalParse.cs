@@ -565,8 +565,17 @@ namespace MorphologicalAnalysis
                 return "NP";
             }
 
+            if (root.GetName().Equals("değil"))
+            {
+                return "NEG";
+            }
+            
             if (IsVerb())
             {
+                if (LastIGContainsTag(MorphologicalTag.ZERO)){
+                    return "NOMP";
+                }
+
                 return "VP";
             }
 
@@ -575,7 +584,7 @@ namespace MorphologicalAnalysis
                 return "ADJP";
             }
 
-            if (IsNoun())
+            if (IsNoun() || IsPercent())
             {
                 return "NP";
             }
@@ -585,9 +594,9 @@ namespace MorphologicalAnalysis
                 return "ADVP";
             }
 
-            if (IsCardinal())
+            if (IsNumber() || IsFraction())
             {
-                return "QP";
+                return "NUM";
             }
 
             if (ContainsTag(MorphologicalTag.POSTPOSITION))
@@ -620,6 +629,29 @@ namespace MorphologicalAnalysis
                 return "NP";
             }
 
+            if (IsPunctuation())
+            {
+                switch (root.GetName()){
+                    case "!":
+                    case "?":
+                        return ".";
+                    case ";":
+                    case "-":
+                    case "--":
+                        return ":";
+                    case "(":
+                    case "-LRB-":
+                    case "-lrb-":
+                        return "-LRB-";
+                    case ")":
+                    case "-RRB-":
+                    case "-rrb-":
+                        return "-RRB-";
+                    default:
+                        return root.GetName();
+                }
+            }
+            
             return "-XXX-";
         }
 

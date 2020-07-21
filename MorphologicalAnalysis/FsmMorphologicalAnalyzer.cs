@@ -718,7 +718,7 @@ namespace MorphologicalAnalysis
                 InitializeParseList(parseList, newRoot, isProper);
             }
 
-            if (root.lastIDropsAndNotDropDuringSuffixation())
+            if (root.LastIDropsAndNotDropDuringSuffixation())
             {
                 var newRoot = root.Clone();
                 newRoot.RemoveFlag("IS_UD");
@@ -1200,7 +1200,7 @@ namespace MorphologicalAnalysis
             }
             else
             {
-                p = new Regex(expr);
+                p = new Regex("^" + expr + "$");
                 _mostUsedPatterns[expr] = p;
             }
 

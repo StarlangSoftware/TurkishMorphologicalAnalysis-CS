@@ -145,6 +145,14 @@ namespace MorphologicalAnalysis
         }
 
         /**
+         * The getStates method returns the states in the FiniteStateMachine.
+         * <returns>StateList.</returns>
+         */
+        public List<State> GetStates(){
+            return _states;
+        }
+
+        /**
          * <summary>The getState method is used to loop through the states {@link ArrayList} and return the state whose name equal
          * to the given input name.</summary>
          *
