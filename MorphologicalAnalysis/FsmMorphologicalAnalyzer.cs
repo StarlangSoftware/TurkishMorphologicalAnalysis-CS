@@ -1546,7 +1546,10 @@ namespace MorphologicalAnalysis
             }
 
             fsmParseList = new FsmParseList(fsmParse);
-            _cache?.Add(surfaceForm, fsmParseList);
+            if (fsmParseList.Size() > 0)
+            {
+                _cache?.Add(surfaceForm, fsmParseList);
+            }
 
             return fsmParseList;
         }
