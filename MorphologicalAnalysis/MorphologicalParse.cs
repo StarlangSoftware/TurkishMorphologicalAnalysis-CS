@@ -536,7 +536,7 @@ namespace MorphologicalAnalysis
         }
 
         /**
-         * <summary>The containsTag method takes a MorphologicalTag as an input and loops through the inflectionalGroups {@link ArrayList},
+         * <summary>The ContainsTag method takes a MorphologicalTag as an input and loops through the inflectionalGroups {@link ArrayList},
          * returns true if the input matches with on of the tags in the IG, false otherwise.</summary>
          *
          * <param name="tag">checked tag</param>
@@ -544,12 +544,14 @@ namespace MorphologicalAnalysis
          */
         public bool ContainsTag(MorphologicalTag tag)
         {
-            foreach (var inflectionalGroup in inflectionalGroups) {
+            foreach (var inflectionalGroup in inflectionalGroups)
+            {
                 if (inflectionalGroup.ContainsTag(tag))
                 {
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -569,10 +571,11 @@ namespace MorphologicalAnalysis
             {
                 return "NEG";
             }
-            
+
             if (IsVerb())
             {
-                if (LastIGContainsTag(MorphologicalTag.ZERO)){
+                if (LastIGContainsTag(MorphologicalTag.ZERO))
+                {
                     return "NOMP";
                 }
 
@@ -631,7 +634,8 @@ namespace MorphologicalAnalysis
 
             if (IsPunctuation())
             {
-                switch (root.GetName()){
+                switch (root.GetName())
+                {
                     case "!":
                     case "?":
                         return ".";
@@ -651,8 +655,539 @@ namespace MorphologicalAnalysis
                         return root.GetName();
                 }
             }
-            
+
             return "-XXX-";
+        }
+
+        private string GetPronType()
+        {
+            var lemma = root.GetName();
+            if (ContainsTag(MorphologicalTag.PERSONALPRONOUN))
+            {
+                return "Prs";
+            }
+
+            if (lemma.Equals("birbiri") || lemma.Equals("birbirleri"))
+            {
+                return "Rcp";
+            }
+
+            if (lemma.Equals("kim") || lemma.Equals("nere") || lemma.Equals("ne")
+                || lemma.Equals("hangi") || lemma.Equals("nasıl") || lemma.Equals("kaç")
+                || lemma.Equals("mi") || lemma.Equals("mı") || lemma.Equals("mu") || lemma.Equals("mü"))
+            {
+                return "Int";
+            }
+
+            if (ContainsTag(MorphologicalTag.DEMONSTRATIVEPRONOUN))
+            {
+                return "Dem";
+            }
+
+            return null;
+        }
+
+        private string GetNumType()
+        {
+            var lemma = root.GetName();
+            if (ContainsTag(MorphologicalTag.CARDINAL) || ContainsTag(MorphologicalTag.NUMBER) || lemma.Equals("kaç"))
+            {
+                return "Card";
+            }
+
+            if (ContainsTag(MorphologicalTag.ORDINAL) || lemma.Equals("kaçıncı"))
+            {
+                return "Ord";
+            }
+
+            if (ContainsTag(MorphologicalTag.DISTRIBUTIVE))
+            {
+                return "Dist";
+            }
+
+            return null;
+        }
+
+        private string GetReflex()
+        {
+            var lemma = root.GetName();
+            if (lemma.Equals("kendi"))
+            {
+                return "Yes";
+            }
+
+            return null;
+        }
+
+        private string GetNumber()
+        {
+            if (ContainsTag(MorphologicalTag.A1SG) || ContainsTag(MorphologicalTag.A2SG) ||
+                ContainsTag(MorphologicalTag.A3SG)
+                || ContainsTag(MorphologicalTag.P1SG) || ContainsTag(MorphologicalTag.P2SG) ||
+                ContainsTag(MorphologicalTag.P3SG))
+            {
+                return "Sing";
+            }
+
+            if (ContainsTag(MorphologicalTag.A1PL) || ContainsTag(MorphologicalTag.A2PL) ||
+                ContainsTag(MorphologicalTag.A3PL)
+                || ContainsTag(MorphologicalTag.P1PL) || ContainsTag(MorphologicalTag.P2PL) ||
+                ContainsTag(MorphologicalTag.P3PL))
+            {
+                return "Plur";
+            }
+
+            return null;
+        }
+
+        private string GetCase()
+        {
+            if (ContainsTag(MorphologicalTag.ACCUSATIVE) || ContainsTag(MorphologicalTag.PCACCUSATIVE))
+            {
+                return "Acc";
+            }
+
+            if (ContainsTag(MorphologicalTag.DATIVE) || ContainsTag(MorphologicalTag.PCDATIVE))
+            {
+                return "Dat";
+            }
+
+            if (ContainsTag(MorphologicalTag.GENITIVE) || ContainsTag(MorphologicalTag.PCGENITIVE))
+            {
+                return "Gen";
+            }
+
+            if (ContainsTag(MorphologicalTag.LOCATIVE))
+            {
+                return "Loc";
+            }
+
+            if (ContainsTag(MorphologicalTag.INSTRUMENTAL) || ContainsTag(MorphologicalTag.PCINSTRUMENTAL))
+            {
+                return "Ins";
+            }
+
+            if (ContainsTag(MorphologicalTag.ABLATIVE) || ContainsTag(MorphologicalTag.PCABLATIVE))
+            {
+                return "Abl";
+            }
+
+            if (ContainsTag(MorphologicalTag.NOMINATIVE) || ContainsTag(MorphologicalTag.PCNOMINATIVE))
+            {
+                return "Nom";
+            }
+
+            return null;
+        }
+
+        private string GetDefinite()
+        {
+            var lemma = root.GetName();
+            if (ContainsTag(MorphologicalTag.DETERMINER))
+            {
+                if (lemma.Equals("bir") || lemma.Equals("bazı") || lemma.Equals("birkaç"))
+                {
+                    return "Ind";
+                }
+
+                if (lemma.Equals("her") || lemma.Equals("bu") || lemma.Equals("şu") || lemma.Equals("o") ||
+                    lemma.Equals("bütün"))
+                {
+                    return "Def";
+                }
+            }
+
+            return null;
+        }
+
+        private string GetDegree()
+        {
+            var lemma = root.GetName();
+            if (lemma.Equals("daha"))
+            {
+                return "Cmp";
+            }
+
+            if (lemma.Equals("en") && !IsNoun())
+            {
+                return "Sup";
+            }
+
+            return null;
+        }
+
+        private string GetPolarity()
+        {
+            if (ContainsTag(MorphologicalTag.POSITIVE))
+            {
+                return "Pos";
+            }
+
+            if (ContainsTag(MorphologicalTag.NEGATIVE))
+            {
+                return "Neg";
+            }
+
+            return null;
+        }
+
+        private string GetPerson()
+        {
+            if (ContainsTag(MorphologicalTag.A1SG) || ContainsTag(MorphologicalTag.A1PL)
+                                                   || ContainsTag(MorphologicalTag.P1SG) ||
+                                                   ContainsTag(MorphologicalTag.P1PL))
+            {
+                return "1";
+            }
+
+            if (ContainsTag(MorphologicalTag.A2SG) || ContainsTag(MorphologicalTag.A2PL)
+                                                   || ContainsTag(MorphologicalTag.P2SG) ||
+                                                   ContainsTag(MorphologicalTag.P2PL))
+            {
+                return "2";
+            }
+
+            if (ContainsTag(MorphologicalTag.A3SG) || ContainsTag(MorphologicalTag.A3PL)
+                                                   || ContainsTag(MorphologicalTag.P3SG) ||
+                                                   ContainsTag(MorphologicalTag.P3PL))
+            {
+                return "3";
+            }
+
+            return null;
+        }
+
+        private string GetVoice()
+        {
+            if (ContainsTag(MorphologicalTag.PASSIVE))
+            {
+                return "Pass";
+            }
+
+            if (ContainsTag(MorphologicalTag.RECIPROCAL))
+            {
+                return "Rcp";
+            }
+
+            if (ContainsTag(MorphologicalTag.CAUSATIVE))
+            {
+                return "Cau";
+            }
+
+            if (ContainsTag(MorphologicalTag.REFLEXIVE))
+            {
+                return "Rfl";
+            }
+
+            return null;
+        }
+
+        private string GetAspect()
+        {
+            if (ContainsTag(MorphologicalTag.PASTTENSE) || ContainsTag(MorphologicalTag.NARRATIVE) ||
+                ContainsTag(MorphologicalTag.FUTURE))
+            {
+                return "Perf";
+            }
+
+            if (ContainsTag(MorphologicalTag.PROGRESSIVE1) || ContainsTag(MorphologicalTag.PROGRESSIVE2))
+            {
+                return "Prog";
+            }
+
+            if (ContainsTag(MorphologicalTag.AORIST))
+            {
+                return "Hab";
+            }
+
+            if (ContainsTag(MorphologicalTag.HASTILY))
+            {
+                return "Rapid";
+            }
+
+            if (ContainsTag(MorphologicalTag.START) || ContainsTag(MorphologicalTag.STAY) ||
+                ContainsTag(MorphologicalTag.REPEAT))
+            {
+                return "Dur";
+            }
+
+            return null;
+        }
+
+        private string GetTense()
+        {
+            if (ContainsTag(MorphologicalTag.PASTTENSE))
+            {
+                return "Past";
+            }
+
+            if (ContainsTag(MorphologicalTag.FUTURE))
+            {
+                return "Fut";
+            }
+
+            if (ContainsTag(MorphologicalTag.NARRATIVE) && ContainsTag(MorphologicalTag.PASTTENSE))
+            {
+                return "Pqp";
+            }
+
+            if (!ContainsTag(MorphologicalTag.PASTTENSE) && !ContainsTag(MorphologicalTag.FUTURE))
+            {
+                return "Pres";
+            }
+
+            return null;
+        }
+
+        private string GetMood()
+        {
+            if (ContainsTag(MorphologicalTag.IMPERATIVE))
+            {
+                return "Imp";
+            }
+
+            if (ContainsTag(MorphologicalTag.CONDITIONAL))
+            {
+                return "Cnd";
+            }
+
+            if (ContainsTag(MorphologicalTag.DESIRE))
+            {
+                return "Des";
+            }
+
+            if (ContainsTag(MorphologicalTag.OPTATIVE))
+            {
+                return "Opt";
+            }
+
+            if (ContainsTag(MorphologicalTag.NECESSITY))
+            {
+                return "Nec";
+            }
+
+            if (ContainsTag(MorphologicalTag.PASTTENSE) || ContainsTag(MorphologicalTag.PROGRESSIVE1) ||
+                ContainsTag(MorphologicalTag.FUTURE))
+            {
+                return "Ind";
+            }
+
+            return null;
+        }
+
+        private string GetVerbForm()
+        {
+            if (ContainsTag(MorphologicalTag.PASTPARTICIPLE) || ContainsTag(MorphologicalTag.FUTUREPARTICIPLE) ||
+                ContainsTag(MorphologicalTag.PRESENTPARTICIPLE))
+            {
+                return "Part";
+            }
+
+            if (ContainsTag(MorphologicalTag.INFINITIVE) || ContainsTag(MorphologicalTag.INFINITIVE2))
+            {
+                return "Vnoun";
+            }
+
+            if (ContainsTag(MorphologicalTag.SINCEDOINGSO) || ContainsTag(MorphologicalTag.WITHOUTHAVINGDONESO) ||
+                ContainsTag(MorphologicalTag.WITHOUTBEINGABLETOHAVEDONESO) || ContainsTag(MorphologicalTag.BYDOINGSO) ||
+                ContainsTag(MorphologicalTag.AFTERDOINGSO) || ContainsTag(MorphologicalTag.INFINITIVE3))
+            {
+                return "Conv";
+            }
+
+            if (ContainsTag(MorphologicalTag.AORIST) || ContainsTag(MorphologicalTag.PASTTENSE) ||
+                ContainsTag(MorphologicalTag.PROGRESSIVE1) || ContainsTag(MorphologicalTag.FUTURE))
+            {
+                return "Fin";
+            }
+
+            return null;
+        }
+
+        public List<string> GetUniversalDependencyFeatures()
+        {
+            var featureList = new List<string>();
+            var pronType = GetPronType();
+            if (pronType != null)
+            {
+                featureList.Add("PronType=" + pronType);
+            }
+
+            var numType = GetNumType();
+            if (numType != null)
+            {
+                featureList.Add("NumType=" + numType);
+            }
+
+            var reflex = GetReflex();
+            if (reflex != null)
+            {
+                featureList.Add("Reflex=" + reflex);
+            }
+
+            var degree = GetDegree();
+            if (degree != null)
+            {
+                featureList.Add("Degree=" + degree);
+            }
+
+            if (IsNoun() || IsVerb())
+            {
+                var number = GetNumber();
+                if (number != null)
+                {
+                    featureList.Add("Number=" + number);
+                }
+            }
+
+            if (IsNoun())
+            {
+                var case_ = GetCase();
+                if (case_ != null)
+                {
+                    featureList.Add("Case=" + case_);
+                }
+            }
+
+            if (ContainsTag(MorphologicalTag.DETERMINER))
+            {
+                var definite = GetDefinite();
+                if (definite != null)
+                {
+                    featureList.Add("Definite=" + definite);
+                }
+            }
+
+            if (IsVerb())
+            {
+                var polarity = GetPolarity();
+                if (polarity != null)
+                {
+                    featureList.Add("Polarity=" + polarity);
+                }
+
+                var person = GetPerson();
+                if (person != null)
+                {
+                    featureList.Add("Person=" + person);
+                }
+
+                var voice = GetVoice();
+                if (voice != null)
+                {
+                    featureList.Add("Voice=" + voice);
+                }
+
+                var aspect = GetAspect();
+                if (aspect != null)
+                {
+                    featureList.Add("Aspect=" + aspect);
+                }
+
+                var tense = GetTense();
+                if (tense != null)
+                {
+                    featureList.Add("Tense=" + tense);
+                }
+
+                var mood = GetMood();
+                if (mood != null)
+                {
+                    featureList.Add("Mood=" + mood);
+                }
+
+                var verbForm = GetVerbForm();
+                if (verbForm != null)
+                {
+                    featureList.Add("VerbForm=" + verbForm);
+                }
+            }
+
+            featureList.Sort(StringComparer.OrdinalIgnoreCase);
+            return featureList;
+        }
+
+        public string GetUniversalDependencyPos()
+        {
+            String lemma = root.GetName();
+            if (lemma.Equals("değil"))
+            {
+                return "AUX";
+            }
+
+            if (IsProperNoun())
+            {
+                return "PROPN";
+            }
+
+            if (IsNoun())
+            {
+                return "NOUN";
+            }
+
+            if (IsAdjective())
+            {
+                return "ADJ";
+            }
+
+            if (GetPos().Equals("ADV"))
+            {
+                return "ADV";
+            }
+
+            if (ContainsTag(MorphologicalTag.INTERJECTION))
+            {
+                return "INTJ";
+            }
+
+            if (IsVerb())
+            {
+                return "VERB";
+            }
+
+            if (IsPunctuation())
+            {
+                return "PUNCT";
+            }
+
+            if (ContainsTag(MorphologicalTag.DETERMINER))
+            {
+                return "DET";
+            }
+
+            if (IsNumber() || IsDate() || IsTime() || IsOrdinal() || IsFraction() || lemma.Equals("%"))
+            {
+                return "NUM";
+            }
+
+            if (GetPos().Equals("PRON"))
+            {
+                return "PRON";
+            }
+
+            if (GetPos().Equals("POSTP"))
+            {
+                return "ADP";
+            }
+
+            if (GetPos().Equals("QUES"))
+            {
+                return "AUX";
+            }
+
+            if (GetPos().Equals("CONJ"))
+            {
+                if (lemma.Equals("ki") || lemma.Equals("eğer") || lemma.Equals("diye"))
+                {
+                    return "SCONJ";
+                }
+                else
+                {
+                    return "CCONJ";
+                }
+            }
+
+            return "X";
         }
 
         /**

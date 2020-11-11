@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Text.RegularExpressions;
 using Corpus;
 using DataStructure.Cache;
@@ -14,6 +15,7 @@ namespace MorphologicalAnalysis
         private readonly Trie _dictionaryTrie;
         private readonly FiniteStateMachine _finiteStateMachine;
         private static int MAX_DISTANCE = 2;
+        private HashSet<string> parsedSurfaceForms = null;
         private readonly TxtDictionary _dictionary;
         private readonly LRUCache<string, FsmParseList> _cache;
         private readonly Dictionary<string, Regex> _mostUsedPatterns = new Dictionary<string, Regex>();
@@ -105,6 +107,20 @@ namespace MorphologicalAnalysis
         public FsmMorphologicalAnalyzer(TxtDictionary dictionary) : this("turkish_finite_state_machine.xml", dictionary,
             10000000)
         {
+        }
+
+        public void AddParsedSurfaceForms(string fileName)
+        {
+            parsedSurfaceForms = new HashSet<string>();
+            var assembly = typeof(FiniteStateMachine).Assembly;
+            var stream = assembly.GetManifestResourceStream("MorphologicalAnalysis." + fileName);
+            var streamReader = new StreamReader(stream);
+            var line = streamReader.ReadLine();
+            while (line != null)
+            {
+                parsedSurfaceForms.Add(line);
+                line = streamReader.ReadLine();
+            }
         }
 
         /**
@@ -861,7 +877,8 @@ namespace MorphologicalAnalysis
                 var root = (TxtWord) currentFsmParse.GetWord();
                 var currentState = currentFsmParse.GetFinalSuffix();
                 var currentSurfaceForm = currentFsmParse.GetSurfaceForm();
-                if (currentState.IsEndState() && string.Equals(currentSurfaceForm, surfaceForm, StringComparison.Ordinal))
+                if (currentState.IsEndState() &&
+                    string.Equals(currentSurfaceForm, surfaceForm, StringComparison.Ordinal))
                 {
                     return true;
                 }
@@ -934,7 +951,8 @@ namespace MorphologicalAnalysis
                 var root = (TxtWord) currentFsmParse.GetWord();
                 var currentState = currentFsmParse.GetFinalSuffix();
                 var currentSurfaceForm = currentFsmParse.GetSurfaceForm();
-                if (currentState.IsEndState() && string.Equals(currentSurfaceForm, surfaceForm, StringComparison.Ordinal))
+                if (currentState.IsEndState() &&
+                    string.Equals(currentSurfaceForm, surfaceForm, StringComparison.Ordinal))
                 {
                     var exists = false;
                     int i;
@@ -1407,6 +1425,9 @@ namespace MorphologicalAnalysis
         public FsmParseList MorphologicalAnalysis(string surfaceForm)
         {
             FsmParseList fsmParseList;
+            if (parsedSurfaceForms != null && !parsedSurfaceForms.Contains(surfaceForm.ToLower(new CultureInfo("tr")))){
+                return new FsmParseList(new List<FsmParse>());
+            }
             if (_cache != null && _cache.Contains(surfaceForm))
             {
                 return _cache.Get(surfaceForm);
