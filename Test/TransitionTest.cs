@@ -59,8 +59,6 @@ namespace Test
         {
             Assert.True(fsm.MorphologicalAnalysis("büyülüyor").Size() != 0);
             Assert.True(fsm.MorphologicalAnalysis("bölümlüyor").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("adresliyor").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("alevliyor").Size() != 0);
             Assert.True(fsm.MorphologicalAnalysis("buğuluyor").Size() != 0);
             Assert.True(fsm.MorphologicalAnalysis("bulguluyor").Size() != 0);
             Assert.True(fsm.MorphologicalAnalysis("açıklıyor").Size() != 0);
@@ -185,7 +183,6 @@ namespace Test
         {
             Assert.True(fsm.MorphologicalAnalysis("hizbi").Size() != 0);
             Assert.True(fsm.MorphologicalAnalysis("kaybı").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("akdi").Size() != 0);
             Assert.True(fsm.MorphologicalAnalysis("ahdi").Size() != 0);
             Assert.True(fsm.MorphologicalAnalysis("nesci").Size() != 0);
             Assert.True(fsm.MorphologicalAnalysis("zehri").Size() != 0);
