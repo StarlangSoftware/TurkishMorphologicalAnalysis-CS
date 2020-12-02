@@ -6,7 +6,7 @@ namespace Test
 {
     public class FsmParseListTest
     {
-        FsmParseList parse1, parse2, parse3, parse4, parse5, parse6, parse7, parse8, parse9;
+        FsmParseList parse1, parse2, parse3, parse4, parse5, parse6, parse7, parse8, parse9, parse10, parse11, parse12;
 
         [SetUp]
         public void Setup()
@@ -21,6 +21,9 @@ namespace Test
             parse7 = fsm.MorphologicalAnalysis("esaslarını");
             parse8 = fsm.MorphologicalAnalysis("güçleriyle");
             parse9 = fsm.MorphologicalAnalysis("bulmayacakları");
+            parse10 = fsm.MorphologicalAnalysis("kitabı");
+            parse11 = fsm.MorphologicalAnalysis("kitapları");
+            parse12 = fsm.MorphologicalAnalysis("o");
         }
 
         [Test]
@@ -99,6 +102,16 @@ namespace Test
             Assert.AreEqual(2, parse7.ConstructParseListForDifferentRootWithPos().Count);
             Assert.AreEqual(2, parse8.ConstructParseListForDifferentRootWithPos().Count);
             Assert.AreEqual(1, parse9.ConstructParseListForDifferentRootWithPos().Count);
+        }
+
+        [Test]
+        public void TestParsesWithoutPrefixAndSuffix()
+        {
+            Assert.AreEqual("P3SG+NOM$PNON+ACC", parse10.ParsesWithoutPrefixAndSuffix());
+            Assert.AreEqual("A3PL+P3PL+NOM$A3PL+P3SG+NOM$A3PL+PNON+ACC$A3SG+P3PL+NOM",
+                parse11.ParsesWithoutPrefixAndSuffix());
+            Assert.AreEqual("DET$PRON+DEMONSP+A3SG+PNON+NOM$PRON+PERS+A3SG+PNON+NOM",
+                parse12.ParsesWithoutPrefixAndSuffix());
         }
     }
 }

@@ -94,22 +94,26 @@ namespace MorphologicalAnalysis
                 }
             }
         }
-        
+
         /**
          * <summary>The getParseWithLongestRootWord method returns the parse with the longest root word. If more than one parse has the
          * longest root word, the first parse with that root is returned.</summary>
          *
          * <returns>FsmParse Parse with the longest root word.</returns>
          */
-        public FsmParse GetParseWithLongestRootWord(){
+        public FsmParse GetParseWithLongestRootWord()
+        {
             var maxLength = -1;
             FsmParse bestParse = null;
-            foreach (var currentParse in _fsmParses) {
-                if (currentParse.GetWord().GetName().Length > maxLength) {
+            foreach (var currentParse in _fsmParses)
+            {
+                if (currentParse.GetWord().GetName().Length > maxLength)
+                {
                     maxLength = currentParse.GetWord().GetName().Length;
                     bestParse = currentParse;
                 }
             }
+
             return bestParse;
         }
 
@@ -134,129 +138,6 @@ namespace MorphologicalAnalysis
                     i++;
                 }
             }
-        }
-
-        /**
-         * <summary>The defaultCaseForParseString method takes string rootForm, parseString and partOfSpeech as inputs. And checks defined cases
-         * for parseString and returns the strings till the $ sign. For example, if the given parseString is
-         * "A3PL+P3PL+NOM$A3PL+P3SG+NOM$A3PL+PNON+ACC$A3SG+P3PL+NOM" it returns "A3PL+P3SG+NOM".</summary>
-         *
-         * <param name="rootForm">    string input.</param>
-         * <param name="parseString"> string input.</param>
-         * <param name="partOfSpeech">string input.</param>
-         * <returns>string defaultCase.</returns>
-         */
-        private string DefaultCaseForParseString(string rootForm, string parseString, string partOfSpeech)
-        {
-            string defaultCase = null;
-            switch (parseString)
-            {
-                case "P3SG+NOM$PNON+ACC":
-                    if (partOfSpeech == "PROP")
-                    {
-                        defaultCase = "PNON+ACC";
-                    }
-                    else
-                    {
-                        defaultCase = "P3SG+NOM";
-                    }
-
-                    break;
-                case "A2SG+P2SG$A3SG+P3SG":
-                    defaultCase = "A3SG+P3SG";
-                    break;
-                case "A3PL+P3PL+NOM$A3PL+P3SG+NOM$A3PL+PNON+ACC$A3SG+P3PL+NOM":
-                    defaultCase = "A3PL+P3SG+NOM";
-                    break;
-                case "P2SG$P3SG":
-                    defaultCase = "P3SG";
-                    break;
-                case "A3PL+PNON+NOM$A3SG+PNON+NOM^DB+VERB+ZERO+PRES+A3PL":
-                    defaultCase = "A3PL+PNON+NOM";
-                    break;
-                case "P2SG+NOM$PNON+GEN":
-                    defaultCase = "PNON+GEN";
-                    break;
-                case "AOR^DB+ADJ+ZERO$AOR+A3SG":
-                    defaultCase = "AOR+A3SG";
-                    break;
-                case "P2SG$PNON":
-                    defaultCase = "PNON";
-                    break;
-                case "ADV+SINCE$VERB+ZERO+PRES+COP+A3SG":
-                    if (rootForm == "yıl" || rootForm == "süre" || rootForm == "zaman" || rootForm == "ay")
-                    {
-                        defaultCase = "ADV+SINCE";
-                    }
-                    else
-                    {
-                        defaultCase = "VERB+ZERO+PRES+COP+A3SG";
-                    }
-
-                    break;
-                case "CONJ$VERB+POS+IMP+A2SG":
-                    defaultCase = "CONJ";
-                    break;
-                case "NEG+IMP+A2SG$POS^DB+NOUN+INF2+A3SG+PNON+NOM":
-                    defaultCase = "POS^DB+NOUN+INF2+A3SG+PNON+NOM";
-                    break;
-                case "NEG+OPT+A3SG$POS^DB+NOUN+INF2+A3SG+PNON+DAT":
-                    defaultCase = "POS^DB+NOUN+INF2+A3SG+PNON+DAT";
-                    break;
-                case "NOUN+A3SG+P3SG+NOM$NOUN^DB+ADJ+ALMOST":
-                    defaultCase = "NOUN+A3SG+P3SG+NOM";
-                    break;
-                case "ADJ$VERB+POS+IMP+A2SG":
-                    defaultCase = "ADJ";
-                    break;
-                case "NOUN+A3SG+PNON+NOM$VERB+POS+IMP+A2SG":
-                    defaultCase = "NOUN+A3SG+PNON+NOM";
-                    break;
-                case "INF2+A3SG+P3SG+NOM$INF2^DB+ADJ+ALMOST$":
-                    defaultCase = "INF2+A3SG+P3SG+NOM";
-                    break;
-            }
-
-            return defaultCase;
-        }
-
-        /**
-         * <summary>The caseDisambiguator method first calls the parsesWithoutPrefixAndSuffix method and gets the words without prefixes and suffixes.
-         * If the size of fsmParses {@link List} is 1, it directly returns the first item of that {@link List} and null if
-         * the size is 0.
-         * <p/>
-         * Then, it calls defaultCaseForParseString method with the root of first item of fsmParses, result of parsesWithoutPrefixAndSuffix method,
-         * and the pos of the first item and assigns it result to the defaultCase {@link string}. If defaultCase is not null,
-         * it then loops through the fsmParses and checks whether the current transitionList of {@link FsmParse} contains the defaultCase, if so it returns
-         * current {@link FsmParse}, null otherwise.</summary>
-         *
-         * <returns>FsmParse if it contains defaultCase, null otherwise.</returns>
-         */
-        public FsmParse CaseDisambiguator()
-        {
-            var parseString = ParsesWithoutPrefixAndSuffix();
-            switch (_fsmParses.Count)
-            {
-                case 1:
-                    return _fsmParses[0];
-                case 0:
-                    return null;
-            }
-
-            var defaultCase = DefaultCaseForParseString(_fsmParses[0].GetWord().GetName(), parseString,
-                _fsmParses[0].GetFinalPos());
-            if (defaultCase != null)
-            {
-                foreach (var fsmParse in _fsmParses)
-                {
-                    if (fsmParse.TransitionList().Contains(defaultCase))
-                    {
-                        return fsmParse;
-                    }
-                }
-            }
-
-            return null;
         }
 
         /**
