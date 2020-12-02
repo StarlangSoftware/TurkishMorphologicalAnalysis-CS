@@ -6,7 +6,7 @@ namespace Test
 {
     public class FsmParseListTest
     {
-        FsmParseList parse1, parse2, parse3, parse4, parse5, parse6, parse7, parse8, parse9, parse10, parse11, parse12;
+        FsmParseList parse1, parse2, parse3, parse4, parse5, parse6, parse7, parse8, parse9, parse10, parse11, parse12, parse13;
 
         [SetUp]
         public void Setup()
@@ -24,6 +24,7 @@ namespace Test
             parse10 = fsm.MorphologicalAnalysis("kitabı");
             parse11 = fsm.MorphologicalAnalysis("kitapları");
             parse12 = fsm.MorphologicalAnalysis("o");
+            parse13 = fsm.MorphologicalAnalysis("arabası");
         }
 
         [Test]
@@ -112,6 +113,8 @@ namespace Test
                 parse11.ParsesWithoutPrefixAndSuffix());
             Assert.AreEqual("DET$PRON+DEMONSP+A3SG+PNON+NOM$PRON+PERS+A3SG+PNON+NOM",
                 parse12.ParsesWithoutPrefixAndSuffix());
+            Assert.AreEqual("NOUN^DB+ADJ+ALMOST$NOUN+A3SG+P3SG+NOM",
+                parse13.ParsesWithoutPrefixAndSuffix());
         }
     }
 }
