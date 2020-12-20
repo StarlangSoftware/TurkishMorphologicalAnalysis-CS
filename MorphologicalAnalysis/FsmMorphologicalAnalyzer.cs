@@ -1097,22 +1097,21 @@ namespace MorphologicalAnalysis
                 return initialFsmParse;
             }
 
-            if (PatternMatches("(\\d\\d|\\d)/(\\d\\d|\\d)/\\d+", surfaceForm) ||
-                PatternMatches("(\\d\\d|\\d)\\.(\\d\\d|\\d)\\.\\d+", surfaceForm))
-            {
-                initialFsmParse = new List<FsmParse>(1);
-                fsmParse = new FsmParse(surfaceForm, new State(("DateRoot"), true, true));
-                fsmParse.ConstructInflectionalGroups();
-                initialFsmParse.Add(fsmParse);
-                return initialFsmParse;
-            }
-
             if (PatternMatches("\\d+/\\d+", surfaceForm))
             {
                 initialFsmParse = new List<FsmParse>(1);
                 fsmParse = new FsmParse(surfaceForm, new State(("FractionRoot"), true, true));
                 fsmParse.ConstructInflectionalGroups();
                 initialFsmParse.Add(fsmParse);
+                fsmParse = new FsmParse(surfaceForm, new State(("DateRoot"), true, true));
+                fsmParse.ConstructInflectionalGroups();
+                initialFsmParse.Add(fsmParse);
+                return initialFsmParse;
+            }
+
+            if (IsDate(surfaceForm))
+            {
+                initialFsmParse = new List<FsmParse>(1);
                 fsmParse = new FsmParse(surfaceForm, new State(("DateRoot"), true, true));
                 fsmParse.ConstructInflectionalGroups();
                 initialFsmParse.Add(fsmParse);
@@ -1128,8 +1127,7 @@ namespace MorphologicalAnalysis
                 return initialFsmParse;
             }
 
-            if (surfaceForm.Equals("%") || PatternMatches("%(\\d\\d|\\d)", surfaceForm) ||
-                PatternMatches("%(\\d\\d|\\d)\\.\\d+", surfaceForm))
+            if (surfaceForm.Equals("%") || IsPercent(surfaceForm))
             {
                 initialFsmParse = new List<FsmParse>(1);
                 fsmParse = new FsmParse(surfaceForm, new State(("PercentRoot"), true, true));
@@ -1138,8 +1136,7 @@ namespace MorphologicalAnalysis
                 return initialFsmParse;
             }
 
-            if (PatternMatches("(\\d\\d|\\d):(\\d\\d|\\d):(\\d\\d|\\d)", surfaceForm) ||
-                PatternMatches("(\\d\\d|\\d):(\\d\\d|\\d)", surfaceForm))
+            if (IsTime(surfaceForm))
             {
                 initialFsmParse = new List<FsmParse>(1);
                 fsmParse = new FsmParse(surfaceForm, new State(("TimeRoot"), true, true));
@@ -1148,9 +1145,7 @@ namespace MorphologicalAnalysis
                 return initialFsmParse;
             }
 
-            if (PatternMatches("\\d+-\\d+", surfaceForm) ||
-                PatternMatches("(\\d\\d|\\d):(\\d\\d|\\d)-(\\d\\d|\\d):(\\d\\d|\\d)", surfaceForm) ||
-                PatternMatches("(\\d\\d|\\d)\\.(\\d\\d|\\d)-(\\d\\d|\\d)\\.(\\d\\d|\\d)", surfaceForm))
+            if (IsRange(surfaceForm))
             {
                 initialFsmParse = new List<FsmParse>(1);
                 fsmParse = new FsmParse(surfaceForm, new State(("RangeRoot"), true, true));
@@ -1405,6 +1400,30 @@ namespace MorphologicalAnalysis
             return word == "" && count > 1;
         }
 
+        private bool IsPercent(string surfaceForm)
+        {
+            return PatternMatches("%(\\d\\d|\\d)", surfaceForm) || PatternMatches("%(\\d\\d|\\d)\\.\\d+", surfaceForm);
+        }
+
+        private bool IsTime(string surfaceForm)
+        {
+            return PatternMatches("(\\d\\d|\\d):(\\d\\d|\\d):(\\d\\d|\\d)", surfaceForm) ||
+                   PatternMatches("(\\d\\d|\\d):(\\d\\d|\\d)", surfaceForm);
+        }
+
+        private bool IsRange(string surfaceForm)
+        {
+            return PatternMatches("\\d+-\\d+", surfaceForm) ||
+                   PatternMatches("(\\d\\d|\\d):(\\d\\d|\\d)-(\\d\\d|\\d):(\\d\\d|\\d)", surfaceForm) ||
+                   PatternMatches("(\\d\\d|\\d)\\.(\\d\\d|\\d)-(\\d\\d|\\d)\\.(\\d\\d|\\d)", surfaceForm);
+        }
+
+        private bool IsDate(string surfaceForm)
+        {
+            return PatternMatches("(\\d\\d|\\d)/(\\d\\d|\\d)/\\d+", surfaceForm) ||
+                   PatternMatches("(\\d\\d|\\d)\\.(\\d\\d|\\d)\\.\\d+", surfaceForm);
+        }
+
         /**
          * <summary>The morphologicalAnalysis method is used to analyse a FsmParseList by comparing with the regex.
          * It creates an {@link ArrayList} fsmParse to hold the result of the analysis method. For each surfaceForm input,
@@ -1425,9 +1444,14 @@ namespace MorphologicalAnalysis
         public FsmParseList MorphologicalAnalysis(string surfaceForm)
         {
             FsmParseList fsmParseList;
-            if (parsedSurfaceForms != null && !parsedSurfaceForms.Contains(surfaceForm.ToLower(new CultureInfo("tr")))){
+            if (parsedSurfaceForms != null &&
+                !parsedSurfaceForms.Contains(surfaceForm.ToLower(new CultureInfo("tr"))) && !IsInteger(surfaceForm) &&
+                !IsDouble(surfaceForm) && !IsPercent(surfaceForm) && !IsTime(surfaceForm) && !IsRange(surfaceForm) &&
+                !IsDate(surfaceForm))
+            {
                 return new FsmParseList(new List<FsmParse>());
             }
+
             if (_cache != null && _cache.Contains(surfaceForm))
             {
                 return _cache.Get(surfaceForm);
@@ -1462,8 +1486,7 @@ namespace MorphologicalAnalysis
                     }
                     else
                     {
-                        if (PatternMatches("(\\d\\d|\\d)/(\\d\\d|\\d)/\\d+", possibleRoot) ||
-                            PatternMatches("(\\d\\d|\\d)\\.(\\d\\d|\\d)\\.\\d+", possibleRoot))
+                        if (IsDate(possibleRoot))
                         {
                             _dictionaryTrie.AddWord(possibleRoot, new TxtWord(possibleRoot, "IS_DATE"));
                             fsmParse = Analysis(surfaceForm.ToLower(new CultureInfo("tr")), IsProperNoun(surfaceForm));
@@ -1478,8 +1501,7 @@ namespace MorphologicalAnalysis
                             }
                             else
                             {
-                                if (PatternMatches("%(\\d\\d|\\d)", possibleRoot) ||
-                                    PatternMatches("%(\\d\\d|\\d)\\.\\d+", possibleRoot))
+                                if (IsPercent(possibleRoot))
                                 {
                                     _dictionaryTrie.AddWord(possibleRoot, new TxtWord(possibleRoot, "IS_PERCENT"));
                                     fsmParse = Analysis(surfaceForm.ToLower(new CultureInfo("tr")),
@@ -1487,8 +1509,7 @@ namespace MorphologicalAnalysis
                                 }
                                 else
                                 {
-                                    if (PatternMatches("(\\d\\d|\\d):(\\d\\d|\\d):(\\d\\d|\\d)", possibleRoot) ||
-                                        PatternMatches("(\\d\\d|\\d):(\\d\\d|\\d)", possibleRoot))
+                                    if (IsTime(surfaceForm))
                                     {
                                         _dictionaryTrie.AddWord(possibleRoot, new TxtWord(possibleRoot, "IS_ZAMAN"));
                                         fsmParse = Analysis(surfaceForm.ToLower(new CultureInfo("tr")),
@@ -1496,11 +1517,7 @@ namespace MorphologicalAnalysis
                                     }
                                     else
                                     {
-                                        if (PatternMatches("\\d+-\\d+", possibleRoot) ||
-                                            PatternMatches("(\\d\\d|\\d):(\\d\\d|\\d)-(\\d\\d|\\d):(\\d\\d|\\d)",
-                                                possibleRoot) || PatternMatches(
-                                                "(\\d\\d|\\d)\\.(\\d\\d|\\d)-(\\d\\d|\\d)\\.(\\d\\d|\\d)",
-                                                possibleRoot))
+                                        if (IsRange(surfaceForm))
                                         {
                                             _dictionaryTrie.AddWord(possibleRoot,
                                                 new TxtWord(possibleRoot, "IS_RANGE"));
