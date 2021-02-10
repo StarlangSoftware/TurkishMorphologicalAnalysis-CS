@@ -5,6 +5,15 @@ namespace Test
 {
     public class InflectionalGroupTest
     {
+        
+        [Test]
+        public void TestGetMorphologicalTag() {
+            Assert.AreEqual(InflectionalGroup.GetMorphologicalTag("noun"), MorphologicalTag.NOUN);
+            Assert.AreEqual(InflectionalGroup.GetMorphologicalTag("without"), MorphologicalTag.WITHOUT);
+            Assert.AreEqual(InflectionalGroup.GetMorphologicalTag("interj"), MorphologicalTag.INTERJECTION);
+            Assert.AreEqual(InflectionalGroup.GetMorphologicalTag("inf2"), MorphologicalTag.INFINITIVE2);
+        }
+
         [Test]
         public void Size()
         {

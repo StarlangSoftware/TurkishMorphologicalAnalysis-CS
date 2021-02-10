@@ -127,7 +127,7 @@ namespace MorphologicalAnalysis
         {
             for (var j = 0; j < Tags.Length; j++)
             {
-                if (tag == Tags[j])
+                if (tag.ToUpper() == Tags[j])
                 {
                     return MorphoTags[j];
                 }
