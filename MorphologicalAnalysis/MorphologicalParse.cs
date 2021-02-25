@@ -983,11 +983,6 @@ namespace MorphologicalAnalysis
                 return "Part";
             }
 
-            if (ContainsTag(MorphologicalTag.INFINITIVE) || ContainsTag(MorphologicalTag.INFINITIVE2))
-            {
-                return "Vnoun";
-            }
-
             if (ContainsTag(MorphologicalTag.SINCEDOINGSO) || ContainsTag(MorphologicalTag.WITHOUTHAVINGDONESO) ||
                 ContainsTag(MorphologicalTag.WITHOUTBEINGABLETOHAVEDONESO) || ContainsTag(MorphologicalTag.BYDOINGSO) ||
                 ContainsTag(MorphologicalTag.AFTERDOINGSO) || ContainsTag(MorphologicalTag.INFINITIVE3))
@@ -995,26 +990,20 @@ namespace MorphologicalAnalysis
                 return "Conv";
             }
 
-            if (ContainsTag(MorphologicalTag.AORIST) || ContainsTag(MorphologicalTag.PASTTENSE) ||
-                ContainsTag(MorphologicalTag.PROGRESSIVE1) || ContainsTag(MorphologicalTag.FUTURE))
-            {
-                return "Fin";
-            }
-
             return null;
         }
 
-        public List<string> GetUniversalDependencyFeatures()
+        public List<string> GetUniversalDependencyFeatures(string uPos)
         {
             var featureList = new List<string>();
             var pronType = GetPronType();
-            if (pronType != null)
+            if (pronType != null && uPos != "ADJ" && uPos != "VERB" && uPos != "CCONJ")
             {
                 featureList.Add("PronType=" + pronType);
             }
 
             var numType = GetNumType();
-            if (numType != null)
+            if (numType != null && uPos != "VERB")
             {
                 featureList.Add("NumType=" + numType);
             }
@@ -1067,7 +1056,7 @@ namespace MorphologicalAnalysis
                 }
 
                 var person = GetPerson();
-                if (person != null)
+                if (person != null && uPos != "PROPN")
                 {
                     featureList.Add("Person=" + person);
                 }
@@ -1079,19 +1068,19 @@ namespace MorphologicalAnalysis
                 }
 
                 var aspect = GetAspect();
-                if (aspect != null)
+                if (aspect != null && uPos != "PROPN")
                 {
                     featureList.Add("Aspect=" + aspect);
                 }
 
                 var tense = GetTense();
-                if (tense != null)
+                if (tense != null && uPos != "PROPN")
                 {
                     featureList.Add("Tense=" + tense);
                 }
 
                 var mood = GetMood();
-                if (mood != null)
+                if (mood != null && uPos != "PROPN")
                 {
                     featureList.Add("Mood=" + mood);
                 }
@@ -1145,7 +1134,7 @@ namespace MorphologicalAnalysis
                 return "VERB";
             }
 
-            if (IsPunctuation())
+            if (IsPunctuation() || IsHashTag())
             {
                 return "PUNCT";
             }
