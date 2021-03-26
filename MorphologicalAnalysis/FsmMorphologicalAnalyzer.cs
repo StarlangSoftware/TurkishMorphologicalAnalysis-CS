@@ -15,7 +15,7 @@ namespace MorphologicalAnalysis
         private readonly Trie _dictionaryTrie;
         private readonly FiniteStateMachine _finiteStateMachine;
         private static int MAX_DISTANCE = 2;
-        private HashSet<string> parsedSurfaceForms = null;
+        private Dictionary<string, string> parsedSurfaceForms = null;
         private readonly TxtDictionary _dictionary;
         private readonly LRUCache<string, FsmParseList> _cache;
         private readonly Dictionary<string, Regex> _mostUsedPatterns = new Dictionary<string, Regex>();
@@ -111,14 +111,15 @@ namespace MorphologicalAnalysis
 
         public void AddParsedSurfaceForms(string fileName)
         {
-            parsedSurfaceForms = new HashSet<string>();
+            parsedSurfaceForms = new Dictionary<string, string>();
             var assembly = typeof(FiniteStateMachine).Assembly;
             var stream = assembly.GetManifestResourceStream("MorphologicalAnalysis." + fileName);
             var streamReader = new StreamReader(stream);
             var line = streamReader.ReadLine();
             while (line != null)
             {
-                parsedSurfaceForms.Add(line);
+                var items = line.Split();
+                parsedSurfaceForms[items[0]] = items[1];
                 line = streamReader.ReadLine();
             }
         }
@@ -1444,12 +1445,15 @@ namespace MorphologicalAnalysis
         public FsmParseList MorphologicalAnalysis(string surfaceForm)
         {
             FsmParseList fsmParseList;
+            var lowerCased = surfaceForm.ToLower(new CultureInfo("tr"));
             if (parsedSurfaceForms != null &&
-                !parsedSurfaceForms.Contains(surfaceForm.ToLower(new CultureInfo("tr"))) && !IsInteger(surfaceForm) &&
+                parsedSurfaceForms.ContainsKey(lowerCased) && !IsInteger(surfaceForm) &&
                 !IsDouble(surfaceForm) && !IsPercent(surfaceForm) && !IsTime(surfaceForm) && !IsRange(surfaceForm) &&
                 !IsDate(surfaceForm))
             {
-                return new FsmParseList(new List<FsmParse>());
+                var parses = new List<FsmParse>();
+                parses.Add(new FsmParse(new Word(lowerCased)));
+                return new FsmParseList(parses);
             }
 
             if (_cache != null && _cache.Contains(surfaceForm))

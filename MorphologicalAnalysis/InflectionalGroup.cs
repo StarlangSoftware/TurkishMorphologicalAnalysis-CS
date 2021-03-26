@@ -160,7 +160,7 @@ namespace MorphologicalAnalysis
          * String IG by + and calling the getMorphologicalTag method with these substrings. If getMorphologicalTag method returns
          * a tag, it adds this tag to the IG {@link ArrayList}.</summary>
          *
-         * <param name="IG">String input.</param>
+         * <param name="ig">String input.</param>
          */
         public InflectionalGroup(string ig)
         {
