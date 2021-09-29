@@ -1,4 +1,5 @@
 using System.Globalization;
+using Corpus;
 using Dictionary.Dictionary;
 using MorphologicalAnalysis;
 using NUnit.Framework;
@@ -246,7 +247,6 @@ namespace Test
         }
 
         [Test]
-
         public void morphologicalAnalysisLastIdropsDuringPassiveSuffixation()
         {
             TxtDictionary dictionary = fsm.GetDictionary();
@@ -262,6 +262,23 @@ namespace Test
                     Assert.True(fsm.MorphologicalAnalysis(surfaceForm).Size() != 0);
                 }
             }
+        }
+
+        [Test]
+        public void testReplaceWord()
+        {
+            Assert.AreEqual("Şvesterine söyle kazağı güzelmiş", fsm.ReplaceWord(new Sentence("Hemşirene söyle kazağı güzelmiş"), "hemşire", "şvester").ToString());
+            Assert.AreEqual("Burada çok abartma var", fsm.ReplaceWord(new Sentence("Burada çok mübalağa var"), "mübalağa", "abartma").ToString());
+            Assert.AreEqual("Bu bina çok kötü şekilsizleştirildi", fsm.ReplaceWord(new Sentence("Bu bina çok kötü biçimsizleştirildi"), "biçimsizleş", "şekilsizleş").ToString());
+            Assert.AreEqual("Abim geçen yıl ölmüştü gibi", fsm.ReplaceWord(new Sentence("Abim geçen yıl son yolculuğa çıkmıştı gibi"), "son yolculuğa çık", "öl").ToString());
+            Assert.AreEqual("Hemşirenle evlendim", fsm.ReplaceWord(new Sentence("Kız kardeşinle evlendim"), "kız kardeş", "hemşire").ToString());
+            Assert.AreEqual("Dün yaptığı güreş maçında yenildi", fsm.ReplaceWord(new Sentence("Dün yaptığı güreş maçında mağlup oldu"), "mağlup ol", "yenil").ToString());
+            Assert.AreEqual("Abim geçen yıl son yolculuğa çıkmıştı gibi", fsm.ReplaceWord(new Sentence("Abim geçen yıl ölmüştü gibi"), "öl", "son yolculuğa çık").ToString());
+            Assert.AreEqual("Kız kardeşinle evlendim", fsm.ReplaceWord(new Sentence("Hemşirenle evlendim"), "hemşire", "kız kardeş").ToString());
+            Assert.AreEqual("Dün yaptığı güreş maçında mağlup oldu", fsm.ReplaceWord(new Sentence("Dün yaptığı güreş maçında yenildi"), "yenil", "mağlup ol").ToString());
+            Assert.AreEqual("Dün yaptığı güreş maçında alt oldu sanki", fsm.ReplaceWord(new Sentence("Dün yaptığı güreş maçında mağlup oldu sanki"), "mağlup ol", "alt ol").ToString());
+            Assert.AreEqual("Yemin billah vermişlerdi vazoyu kırmadığına", fsm.ReplaceWord(new Sentence("Yemin etmişlerdi vazoyu kırmadığına"), "yemin et", "yemin billah ver").ToString());
+            Assert.AreEqual("Yemin etmişlerdi vazoyu kırmadığına", fsm.ReplaceWord(new Sentence("Yemin billah vermişlerdi vazoyu kırmadığına"), "yemin billah ver", "yemin et").ToString());
         }
     }
 }

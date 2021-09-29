@@ -896,6 +896,21 @@ namespace MorphologicalAnalysis
             }
             return result;
         }
+        
+        /**
+        * <summary>Replace root word of the current parse with the new root word and returns the new word.</summary>
+        * <param name="newRoot"> Replaced root word</param>
+        * <returns> Root word of the parse will be replaced with the newRoot and the resulting surface form is returned.</returns>
+        */
+        public string ReplaceRootWord(TxtWord newRoot){
+            var result = newRoot.GetName();
+            foreach (var aWith in _withList){
+                var transition = new Transition(null, aWith, null);
+                result = transition.MakeTransition(newRoot, result);
+            }
+            return result;
+        }
+
 
         /**
          * <summary>The overridden ToString method which returns transitionList method.</summary>

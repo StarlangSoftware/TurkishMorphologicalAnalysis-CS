@@ -166,7 +166,7 @@ namespace MorphologicalAnalysis
                 result.Add(currentWord);
             }
 
-            var currentRoot = (TxtWord) _dictionary.GetWord(metamorphicParse.GetWord().GetName());
+            var currentRoot = (TxtWord)_dictionary.GetWord(metamorphicParse.GetWord().GetName());
             if (currentRoot == null && compoundWord != null)
             {
                 currentRoot = compoundWord;
@@ -780,7 +780,7 @@ namespace MorphologicalAnalysis
             var words = _dictionaryTrie.GetWordsWithPrefix(surfaceForm);
             foreach (var word in words)
             {
-                var root = (TxtWord) word;
+                var root = (TxtWord)word;
                 InitializeParseListFromRoot(initialFsmParse, root, isProper);
             }
 
@@ -813,7 +813,7 @@ namespace MorphologicalAnalysis
                         currentTransition.MakeTransition(root, currentSurfaceForm, currentFsmParse.GetStartState());
                     if (tmp.Length <= maxLength)
                     {
-                        var newFsmParse = (FsmParse) currentFsmParse.Clone();
+                        var newFsmParse = (FsmParse)currentFsmParse.Clone();
                         newFsmParse.AddSuffix(currentTransition.ToState(), tmp, currentTransition.With(),
                             currentTransition.ToString(), currentTransition.ToPos());
                         newFsmParse.SetAgreement(currentTransition.With());
@@ -852,7 +852,7 @@ namespace MorphologicalAnalysis
                         (tmp.Length == surfaceForm.Length &&
                          (root.LastIdropsDuringSuffixation() || (tmp.Equals(surfaceForm)))))
                     {
-                        var newFsmParse = (FsmParse) currentFsmParse.Clone();
+                        var newFsmParse = (FsmParse)currentFsmParse.Clone();
                         newFsmParse.AddSuffix(currentTransition.ToState(), tmp, currentTransition.With(),
                             currentTransition.ToString(), currentTransition.ToPos());
                         newFsmParse.SetAgreement(currentTransition.With());
@@ -875,7 +875,7 @@ namespace MorphologicalAnalysis
             {
                 var currentFsmParse = fsmParse[0];
                 fsmParse.RemoveAt(0);
-                var root = (TxtWord) currentFsmParse.GetWord();
+                var root = (TxtWord)currentFsmParse.GetWord();
                 var currentState = currentFsmParse.GetFinalSuffix();
                 var currentSurfaceForm = currentFsmParse.GetSurfaceForm();
                 if (currentState.IsEndState() &&
@@ -905,7 +905,7 @@ namespace MorphologicalAnalysis
             {
                 var currentFsmParse = fsmParse[0];
                 fsmParse.RemoveAt(0);
-                var root = (TxtWord) currentFsmParse.GetWord();
+                var root = (TxtWord)currentFsmParse.GetWord();
                 var currentState = currentFsmParse.GetFinalSuffix();
                 var currentSurfaceForm = currentFsmParse.GetSurfaceForm();
                 if (currentState.IsEndState() && currentSurfaceForm.Length <= maxLength)
@@ -949,7 +949,7 @@ namespace MorphologicalAnalysis
             {
                 var currentFsmParse = fsmParse[0];
                 fsmParse.RemoveAt(0);
-                var root = (TxtWord) currentFsmParse.GetWord();
+                var root = (TxtWord)currentFsmParse.GetWord();
                 var currentState = currentFsmParse.GetFinalSuffix();
                 var currentSurfaceForm = currentFsmParse.GetSurfaceForm();
                 if (currentState.IsEndState() &&
@@ -990,7 +990,7 @@ namespace MorphologicalAnalysis
          */
         public List<FsmParse> MorphologicalAnalysis(TxtWord root, string surfaceForm, string state)
         {
-            var initialFsmParse = new List<FsmParse> {new FsmParse(root, _finiteStateMachine.GetState(state))};
+            var initialFsmParse = new List<FsmParse> { new FsmParse(root, _finiteStateMachine.GetState(state)) };
             return ParseWord(initialFsmParse, surfaceForm);
         }
 
@@ -1028,6 +1028,115 @@ namespace MorphologicalAnalysis
             var initialFsmParse = new List<FsmParse>();
             InitializeParseListFromRoot(initialFsmParse, root, IsProperNoun(surfaceForm));
             return ParseWord(initialFsmParse, surfaceForm);
+        }
+
+        /**
+        * <summary>Replaces previous lemma in the sentence with the new lemma. Both lemma can contain multiple
+         * words.</summary>
+        * <param name="original"> Original sentence to be replaced with.</param>
+        * <param name="previousWord"> Root word in the original sentence</param>
+        * <param name="newWord"> New word to be replaced.</param>
+        * <returns>Newly generated sentence by replacing the previous word in the original sentence with the new word.</returns>
+        */
+        public Sentence ReplaceWord(Sentence original, String previousWord, String newWord)
+        {
+            int i;
+            string[] previousWordSplitted = null, newWordSplitted = null;
+            var result = new Sentence();
+            string replacedWord = null, lastWord, newRootWord;
+            var previousWordMultiple = previousWord.Contains(" ");
+            var newWordMultiple = newWord.Contains(" ");
+            if (previousWordMultiple)
+            {
+                previousWordSplitted = previousWord.Split(" ");
+                lastWord = previousWordSplitted[previousWordSplitted.Length - 1];
+            }
+            else
+            {
+                lastWord = previousWord;
+            }
+
+            if (newWordMultiple)
+            {
+                newWordSplitted = newWord.Split(" ");
+                newRootWord = newWordSplitted[newWordSplitted.Length - 1];
+            }
+            else
+            {
+                newRootWord = newWord;
+            }
+
+            var newRootTxtWord = (TxtWord)_dictionary.GetWord(newRootWord);
+            var parseList = MorphologicalAnalysis(original);
+            for (i = 0; i < parseList.Length; i++)
+            {
+                var replaced = false;
+                for (var j = 0; j < parseList[i].Size(); j++)
+                {
+                    if (parseList[i].GetFsmParse(j).GetWord().GetName() == lastWord && newRootTxtWord != null)
+                    {
+                        replaced = true;
+                        replacedWord = parseList[i].GetFsmParse(j).ReplaceRootWord(newRootTxtWord);
+                    }
+                }
+
+                if (replaced && replacedWord != null)
+                {
+                    if (previousWordMultiple)
+                    {
+                        for (int k = 0; k < i - previousWordSplitted.Length + 1; k++)
+                        {
+                            result.AddWord(original.GetWord(k));
+                        }
+                    }
+
+                    if (newWordMultiple)
+                    {
+                        for (var k = 0; k < newWordSplitted.Length - 1; k++)
+                        {
+                            if (result.WordCount() == 0)
+                            {
+                                result.AddWord(new Word((newWordSplitted[k][0] + "").ToUpper(new CultureInfo("tr")) +
+                                                        newWordSplitted[k].Substring(1)));
+                            }
+                            else
+                            {
+                                result.AddWord(new Word(newWordSplitted[k]));
+                            }
+                        }
+                    }
+
+                    if (result.WordCount() == 0)
+                    {
+                        replacedWord = (replacedWord[0] + "").ToUpper(new CultureInfo("tr")) +
+                                       replacedWord.Substring(1);
+                    }
+
+                    result.AddWord(new Word(replacedWord));
+                    if (previousWordMultiple)
+                    {
+                        i++;
+                        break;
+                    }
+                }
+                else
+                {
+                    if (!previousWordMultiple)
+                    {
+                        result.AddWord(original.GetWord(i));
+                    }
+                }
+            }
+
+            if (previousWordMultiple)
+            {
+                for (; i < parseList.Length; i++)
+                {
+                    result.AddWord(original.GetWord(i));
+                }
+            }
+
+            return result;
         }
 
         /**
@@ -1554,7 +1663,7 @@ namespace MorphologicalAnalysis
                                                         if (_dictionary.GetWord(
                                                             possibleRoot.ToLower(new CultureInfo("tr"))) != null)
                                                         {
-                                                            ((TxtWord) _dictionary.GetWord(
+                                                            ((TxtWord)_dictionary.GetWord(
                                                                     possibleRoot.ToLower(new CultureInfo("tr"))))
                                                                 .AddFlag("IS_OA");
                                                         }
