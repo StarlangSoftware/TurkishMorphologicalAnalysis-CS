@@ -6,7 +6,8 @@ namespace Test
 {
     public class FsmParseListTest
     {
-        FsmParseList parse1, parse2, parse3, parse4, parse5, parse6, parse7, parse8, parse9, parse10, parse11, parse12, parse13;
+        FsmParseList parse1, parse2, parse3, parse4, parse5, parse6, parse7, parse8, parse9, parse10, parse11, parse12, 
+            parse13, parse14;
 
         [SetUp]
         public void Setup()
@@ -25,6 +26,7 @@ namespace Test
             parse11 = fsm.MorphologicalAnalysis("kitapları");
             parse12 = fsm.MorphologicalAnalysis("o");
             parse13 = fsm.MorphologicalAnalysis("arabası");
+            parse14 = fsm.MorphologicalAnalysis("sana");
         }
 
         [Test]
@@ -39,6 +41,7 @@ namespace Test
             Assert.AreEqual(8, parse7.Size());
             Assert.AreEqual(6, parse8.Size());
             Assert.AreEqual(5, parse9.Size());
+            Assert.AreEqual(4, parse14.Size());
         }
 
         [Test]

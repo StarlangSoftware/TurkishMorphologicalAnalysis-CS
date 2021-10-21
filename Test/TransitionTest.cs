@@ -133,6 +133,8 @@ namespace Test
         [Test]
         public void TestExceptions()
         {
+            Assert.True(fsm.MorphologicalAnalysis("yiyip").Size() != 0);
+            Assert.True(fsm.MorphologicalAnalysis("sana").Size() != 0);
             Assert.True(fsm.MorphologicalAnalysis("bununla").Size() != 0);
             Assert.AreEqual(0, fsm.MorphologicalAnalysis("buyla").Size());
             Assert.True(fsm.MorphologicalAnalysis("onunla").Size() != 0);

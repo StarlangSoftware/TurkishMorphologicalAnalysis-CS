@@ -371,12 +371,21 @@ namespace MorphologicalAnalysis
             }
 
             if (root.IsVerb() && root.VerbSoftenDuringSuffixation() && (_with.StartsWith("Hyor") || _with == "yHs" ||
-                _with == "yAn" || _with == "yA" || _with.StartsWith("yAcAk") || _with == "yAsH" || _with == "yHncA" ||
-                _with == "yHp" || _with == "yAlH" || _with == "yArAk" || _with == "yAdur" || _with == "yHver" ||
-                _with == "yAgel" || _with == "yAgor" || _with == "yAbil" || _with == "yAyaz" || _with == "yAkal" ||
-                _with == "yAkoy" || _with == "yAmA" || _with == "yHcH" || _with == "HCH" ||
-                _with.StartsWith("Hr") || _with == "Hs" || _with == "Hn" || _with == "yHn" || _with == "yHnHz" ||
-                _with.StartsWith("Ar") || _with == "Hl"))
+                                                                        _with == "yAn" || _with == "yA" ||
+                                                                        _with.StartsWith("yAcAk") || _with == "yAsH" ||
+                                                                        _with == "yHncA" ||
+                                                                        _with == "yHp" || _with == "yAlH" ||
+                                                                        _with == "yArAk" || _with == "yAdur" ||
+                                                                        _with == "yHver" ||
+                                                                        _with == "yAgel" || _with == "yAgor" ||
+                                                                        _with == "yAbil" || _with == "yAyaz" ||
+                                                                        _with == "yAkal" ||
+                                                                        _with == "yAkoy" || _with == "yAmA" ||
+                                                                        _with == "yHcH" || _with == "HCH" ||
+                                                                        _with.StartsWith("Hr") || _with == "Hs" ||
+                                                                        _with == "Hn" || _with == "yHn" ||
+                                                                        _with == "yHnHz" ||
+                                                                        _with.StartsWith("Ar") || _with == "Hl"))
             {
                 return true;
             }
@@ -425,13 +434,18 @@ namespace MorphologicalAnalysis
                 {
                     return "bana";
                 }
+
+                if (stem.Equals("sen"))
+                {
+                    return "sana";
+                }
             }
 
             _formationToCheck = stem;
             //---vowelEChangesToIDuringYSuffixation---
             //de->d(i)yor, ye->y(i)yor
             if (rootWord && WithFirstChar() == 'y' && root.VowelEChangesToIDuringYSuffixation() &&
-                _with[1] != 'H')
+                (_with[1] != 'H' || root.GetName() == "ye"))
             {
                 formation = stem.Substring(0, stem.Length - 1) + 'i';
                 _formationToCheck = formation;
@@ -459,6 +473,7 @@ namespace MorphologicalAnalysis
                     else
                     {
                         if (rootWord && root.DuplicatesDuringSuffixation() &&
+                            !startState.GetName().StartsWith("VerbalRoot") &&
                             TurkishLanguage.IsConsonantDrop(_with[0]))
                         {
                             //---duplicatesDuringSuffixation---

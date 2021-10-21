@@ -739,7 +739,7 @@ namespace MorphologicalAnalysis
                                                                                     {
                                                                                         if (_suffixList[0].GetName() == "QuestionRoot")
                                                                                         {
-                                                                                            result = _formList[0] + "+QUES";
+                                                                                            result = "mi+QUES";
                                                                                         }
                                                                                         else
                                                                                         {

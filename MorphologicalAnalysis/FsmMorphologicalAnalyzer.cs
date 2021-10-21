@@ -282,7 +282,7 @@ namespace MorphologicalAnalysis
                 }
             }
 
-            if (rootWord && (root.GetName().Equals("ben") || root.LastIdropsDuringSuffixation() ||
+            if (rootWord && (root.GetName().Equals("ben") || root.GetName().Equals("sen") || root.LastIdropsDuringSuffixation() ||
                              root.LastIdropsDuringPassiveSuffixation()))
             {
                 return distance <= MAX_DISTANCE;

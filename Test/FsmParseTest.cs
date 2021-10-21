@@ -5,7 +5,7 @@ namespace Test
 {
     public class FsmParseTest
     {
-        FsmParse parse1, parse2, parse3, parse4, parse5, parse6, parse7, parse8, parse9;
+        FsmParse parse1, parse2, parse3, parse4, parse5, parse6, parse7, parse8, parse9, parse10;
 
         [SetUp]
         public void Setup()
@@ -20,6 +20,7 @@ namespace Test
             parse7 = fsm.MorphologicalAnalysis("esaslarını").GetFsmParse(0);
             parse8 = fsm.MorphologicalAnalysis("güçleriyle").GetFsmParse(0);
             parse9 = fsm.MorphologicalAnalysis("bulmayacakları").GetFsmParse(0);
+            parse10 = fsm.MorphologicalAnalysis("mü").GetFsmParse(0);
         }
 
         [Test]
@@ -55,6 +56,7 @@ namespace Test
             Assert.AreEqual("esas+ADJ^DB+NOUN+ZERO+A3PL+P2SG+ACC", parse7.ToString());
             Assert.AreEqual("güç+ADJ^DB+NOUN+ZERO+A3PL+P3PL+INS", parse8.ToString());
             Assert.AreEqual("bul+VERB+NEG^DB+ADJ+FUTPART+P3PL", parse9.ToString());
+            Assert.AreEqual("mi+QUES+PRES+A3SG", parse10.ToString());
         }
 
         [Test]
