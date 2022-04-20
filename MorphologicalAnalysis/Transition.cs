@@ -218,86 +218,7 @@ namespace MorphologicalAnalysis
 
             return true;
         }
-
-        /**
-         * <summary>The BeforeLastVowel method takes a {@link string} stem as an input. It loops through the given stem and returns
-         * the second last vowel.</summary>
-         *
-         * <param name="stem">string input.</param>
-         * <returns>Vowel before the last vowel.</returns>
-         */
-        private char BeforeLastVowel(string stem)
-        {
-            int i, before = 1;
-            var last = '0';
-            for (i = stem.Length - 1; i >= 0; i--)
-            {
-                if (TurkishLanguage.IsVowel(stem[i]))
-                {
-                    if (before == 1)
-                    {
-                        last = stem[i];
-                        before--;
-                        continue;
-                    }
-
-                    return stem[i];
-                }
-            }
-
-            return last;
-        }
-
-        /**
-         * <summary>The LastVowel method takes a {@link string} stem as an input. It loops through the given stem and returns
-         * the last vowel.</summary>
-         *
-         * <param name="stem">string input.</param>
-         * <returns>the last vowel.</returns>
-         */
-        private char LastVowel(string stem)
-        {
-            int i;
-            for (i = stem.Length - 1; i >= 0; i--)
-            {
-                if (TurkishLanguage.IsVowel(stem[i]))
-                {
-                    return stem[i];
-                }
-            }
-
-            for (i = stem.Length - 1; i >= 0; i--)
-            {
-                if (stem[i] >= '0' && stem[i] <= '9')
-                {
-                    return stem[i];
-                }
-            }
-
-            return '0';
-        }
-
-        /**
-         * <summary>The lastPhoneme method takes a {@link string} stem as an input. It then returns the last phoneme of the given stem.</summary>
-         *
-         * <param name="stem">string input.</param>
-         * <returns>the last phoneme.</returns>
-         */
-        private char LastPhoneme(string stem)
-        {
-            if (stem.Length == 0)
-            {
-                return ' ';
-            }
-
-            if (stem[stem.Length - 1] != '\'')
-            {
-                return stem[stem.Length - 1];
-            }
-
-            return stem[stem.Length - 2];
-        }
-
+        
         /**
          * <summary>The withFirstChar method returns the first character of the with variable.</summary>
          *
@@ -480,7 +401,7 @@ namespace MorphologicalAnalysis
                             if (SoftenDuringSuffixation(root))
                             {
                                 //--extra softenDuringSuffixation
-                                switch (LastPhoneme(stem))
+                                switch (Word.LastPhoneme(stem))
                                 {
                                     case 'p':
                                         //tıp->tıbbı
@@ -511,7 +432,7 @@ namespace MorphologicalAnalysis
                                 if (SoftenDuringSuffixation(root))
                                 {
                                     //---softenDuringSuffixation---
-                                    switch (LastPhoneme(stem))
+                                    switch (Word.LastPhoneme(stem))
                                     {
                                         case 'p':
                                             //hizip->hizbi, kayıp->kaybı, kayıt->kaydı, kutup->kutbu
@@ -538,7 +459,7 @@ namespace MorphologicalAnalysis
                             }
                             else
                             {
-                                switch (LastPhoneme(stem))
+                                switch (Word.LastPhoneme(stem))
                                 {
                                     //---nounSoftenDuringSuffixation or verbSoftenDuringSuffixation
                                     case 'p':
@@ -636,7 +557,7 @@ namespace MorphologicalAnalysis
             else
             {
                 if ((TurkishLanguage.IsConsonantDrop(WithFirstChar()) &&
-                     TurkishLanguage.IsConsonant(LastPhoneme(stem))) ||
+                     TurkishLanguage.IsConsonant(Word.LastPhoneme(stem))) ||
                     (rootWord && root.ConsonantSMayInsertedDuringPossesiveSuffixation()))
                 {
                     if (_with[0] == '\'')
@@ -659,30 +580,30 @@ namespace MorphologicalAnalysis
                 switch (_with[i])
                 {
                     case 'D':
-                        formation = ResolveD(root, formation);
+                        formation = MorphotacticEngine.ResolveD(root, formation, _formationToCheck);
                         break;
                     case 'A':
-                        formation = ResolveA(root, formation, rootWord);
+                        formation = MorphotacticEngine.ResolveA(root, formation, rootWord, _formationToCheck);
                         break;
                     case 'H':
                         if (_with[0] != '\'')
                         {
-                            formation = ResolveH(root, formation, i == 0, _with.StartsWith("Hyor"), rootWord);
+                            formation = MorphotacticEngine.ResolveH(root, formation, i == 0, _with.StartsWith("Hyor"), rootWord, _formationToCheck);
                         }
                         else
                         {
-                            formation = ResolveH(root, formation, i == 1, false, rootWord);
+                            formation = MorphotacticEngine.ResolveH(root, formation, i == 1, false, rootWord, _formationToCheck);
                         }
 
                         break;
                     case 'C':
-                        formation = ResolveC(formation);
+                        formation = MorphotacticEngine.ResolveC(formation, _formationToCheck);
                         break;
                     case 'S':
-                        formation = ResolveS(formation);
+                        formation = MorphotacticEngine.ResolveS(formation);
                         break;
                     case 'Ş':
-                        formation = ResolveSh(formation);
+                        formation = MorphotacticEngine.ResolveSh(formation);
                         break;
                     default:
                         if (i == _with.Length - 1 && _with[i] == 's')
@@ -702,282 +623,7 @@ namespace MorphologicalAnalysis
 
             return formation;
         }
-
-        private string ResolveD(TxtWord root, string formation)
-        {
-            if (root.IsAbbreviation())
-            {
-                return formation + 'd';
-            }
-
-            if (LastPhoneme(_formationToCheck) >= '0' && LastPhoneme(_formationToCheck) <= '9')
-            {
-                switch (LastPhoneme(_formationToCheck))
-                {
-                    case '3':
-                    case '4':
-                    case '5':
-                        //3->3'tü, 5->5'ti, 4->4'tü
-                        return formation + 't';
-                    case '0':
-                        if (root.GetName().EndsWith("40") || root.GetName().EndsWith("60") ||
-                            root.GetName().EndsWith("70"))
-                            //40->40'tı, 60->60'tı, 70->70'ti
-                            return formation + 't';
-                        else
-                            //30->30'du, 50->50'ydi, 80->80'di
-                            return formation + 'd';
-                    default:
-                        return formation + 'd';
-                }
-            }
-
-            if (TurkishLanguage.IsSertSessiz(LastPhoneme(_formationToCheck)))
-            {
-                //yap+DH->yaptı
-                return formation + 't';
-            }
-
-            //sar+DH->sardı
-            return formation + 'd';
-        }
-
-        private string ResolveA(TxtWord root, string formation, bool rootWord)
-        {
-            if (root.IsAbbreviation())
-            {
-                return formation + 'e';
-            }
-
-            if (LastVowel(_formationToCheck) >= '0' && LastVowel(_formationToCheck) <= '9')
-            {
-                switch (LastVowel(_formationToCheck))
-                {
-                    case '6':
-                    case '9':
-                        //6'ya, 9'a
-                        return formation + 'a';
-                    case '0':
-                        if (root.GetName().EndsWith("10") || root.GetName().EndsWith("30") ||
-                            root.GetName().EndsWith("40") || root.GetName().EndsWith("60") ||
-                            root.GetName().EndsWith("90"))
-                            //10'a, 30'a, 40'a, 60'a, 90'a
-                            return formation + 'a';
-                        else
-                            //20'ye, 50'ye, 80'e, 70'e
-                            return formation + 'e';
-                    default:
-                        //3'e, 8'e, 4'e, 2'ye
-                        return formation + 'e';
-                }
-            }
-
-            if (TurkishLanguage.IsBackVowel(LastVowel(_formationToCheck)))
-            {
-                if (root.NotObeysVowelHarmonyDuringAgglutination() && rootWord)
-                {
-                    //alkole, anormale, ampule, tümamirali, spirali, sosyali
-                    return formation + 'e';
-                }
-
-                //sakala, kabala, eve, kediye
-                return formation + 'a';
-            }
-
-            if (TurkishLanguage.IsFrontVowel(LastVowel(_formationToCheck)))
-            {
-                if (root.NotObeysVowelHarmonyDuringAgglutination() && rootWord)
-                {
-                    //sakala, kabala, eve, kediye
-                    return formation + 'a';
-                }
-
-                //alkole, anormale, ampule, tümamirali, spirali, sosyali
-                return formation + 'e';
-            }
-
-            if (root.IsNumeral() || root.IsFraction() || root.IsReal())
-            {
-                if (root.GetName().EndsWith("6") || root.GetName().EndsWith("9") || root.GetName().EndsWith("10") ||
-                    root.GetName().EndsWith("30") || root.GetName().EndsWith("40") || root.GetName().EndsWith("60") ||
-                    root.GetName().EndsWith("90"))
-                {
-                    return formation + 'a';
-                }
-
-                return formation + 'e';
-            }
-
-            return formation;
-        }
-
-        private string ResolveH(TxtWord root, string formation, bool beginningOfSuffix,
-            bool specialCaseTenseSuffix, bool rootWord)
-        {
-            if (root.IsAbbreviation())
-                return formation + 'i';
-            if (beginningOfSuffix && TurkishLanguage.IsVowel(LastPhoneme(_formationToCheck)) && !specialCaseTenseSuffix)
-            {
-                return formation;
-            }
-
-            if (specialCaseTenseSuffix)
-            {
-                //eğer ek Hyor eki ise,
-                if (rootWord)
-                {
-                    if (root.VowelAChangesToIDuringYSuffixation())
-                    {
-                        if (TurkishLanguage.IsFrontRoundedVowel(BeforeLastVowel(_formationToCheck)))
-                        {
-                            //büyülüyor, bölümlüyor, çözümlüyor, döşüyor
-                            return formation.Substring(0, formation.Length - 1) + 'ü';
-                        }
-
-                        if (TurkishLanguage.IsFrontUnroundedVowel(BeforeLastVowel(_formationToCheck)))
-                        {
-                            //adresliyor, alevliyor, ateşliyor, bekliyor
-                            return formation.Substring(0, formation.Length - 1) + 'i';
-                        }
-
-                        if (TurkishLanguage.IsBackRoundedVowel(BeforeLastVowel(_formationToCheck)))
-                        {
-                            //buğuluyor, bulguluyor, çamurluyor, aforozluyor
-                            return formation.Substring(0, formation.Length - 1) + 'u';
-                        }
-
-                        if (TurkishLanguage.IsBackUnroundedVowel(BeforeLastVowel(_formationToCheck)))
-                        {
-                            //açıklıyor, çalkalıyor, gazlıyor, gıcırdıyor
-                            return formation.Substring(0, formation.Length - 1) + 'ı';
-                        }
-                    }
-                }
-
-                if (TurkishLanguage.IsVowel(LastPhoneme(_formationToCheck)))
-                {
-                    if (TurkishLanguage.IsFrontRoundedVowel(BeforeLastVowel(_formationToCheck)))
-                    {
-                        return formation.Substring(0, formation.Length - 1) + 'ü';
-                    }
-
-                    if (TurkishLanguage.IsFrontUnroundedVowel(BeforeLastVowel(_formationToCheck)))
-                    {
-                        return formation.Substring(0, formation.Length - 1) + 'i';
-                    }
-
-                    if (TurkishLanguage.IsBackRoundedVowel(BeforeLastVowel(_formationToCheck)))
-                    {
-                        return formation.Substring(0, formation.Length - 1) + 'u';
-                    }
-
-                    if (TurkishLanguage.IsBackUnroundedVowel(BeforeLastVowel(_formationToCheck)))
-                    {
-                        return formation.Substring(0, formation.Length - 1) + 'ı';
-                    }
-                }
-            }
-
-            if (TurkishLanguage.IsFrontRoundedVowel(LastVowel(_formationToCheck)) ||
-                (TurkishLanguage.IsBackRoundedVowel(LastVowel(_formationToCheck)) &&
-                 root.NotObeysVowelHarmonyDuringAgglutination()))
-            {
-                return formation + 'ü';
-            }
-
-            if (TurkishLanguage.IsFrontUnroundedVowel(LastVowel(_formationToCheck)) ||
-                (LastVowel(_formationToCheck) == 'a' && root.NotObeysVowelHarmonyDuringAgglutination()))
-            {
-                return formation + 'i';
-            }
-
-            if (TurkishLanguage.IsBackRoundedVowel(LastVowel(_formationToCheck)))
-            {
-                return formation + 'u';
-            }
-
-            if (TurkishLanguage.IsBackUnroundedVowel(LastVowel(_formationToCheck)))
-            {
-                return formation + 'ı';
-            }
-
-            if (root.IsNumeral() || root.IsFraction() || root.IsReal())
-            {
-                if (root.GetName().EndsWith("6") || root.GetName().EndsWith("40") || root.GetName().EndsWith("60") ||
-                    root.GetName().EndsWith("90"))
-                {
-                    //6'yı, 40'ı, 60'ı
-                    return formation + 'ı';
-                }
-
-                if (root.GetName().EndsWith("3") || root.GetName().EndsWith("4") || root.GetName().EndsWith("00"))
-                {
-                    //3'ü, 4'ü, 100'ü
-                    return formation + 'ü';
-                }
-
-                if (root.GetName().EndsWith("9") || root.GetName().EndsWith("10") ||
-                    root.GetName().EndsWith("30"))
-                {
-                    //9'u, 10'u, 30'u
-                    return formation + 'u';
-                }
-
-                //2'yi, 5'i, 8'i
-                return formation + 'i';
-            }
-
-            return formation;
-        }
-
-        /**
-         * <summary>The resolveC method takes a {@link string} formation as an input. If the last phoneme is on of the "çfhkpsşt", it
-         * concatenates given formation with 'ç', if not it concatenates given formation with 'c'.</summary>
-         *
-         * <param name="formation">{@link string} input.</param>
-         * <returns>resolved string.</returns>
-         */
-        private string ResolveC(string formation)
-        {
-            if (TurkishLanguage.IsSertSessiz(LastPhoneme(_formationToCheck)))
-            {
-                return formation + 'ç';
-            }
-
-            return formation + 'c';
-        }
-
-        /**
-         * <summary>The resolveS method takes a {@link string} formation as an input. It then concatenates given formation with 's'.</summary>
-         *
-         * <param name="formation">{@link string} input.</param>
-         * <returns>resolved string.</returns>
-         */
-        private string ResolveS(string formation)
-        {
-            return formation + 's';
-        }
-
-        /**
-         * <summary>The resolveSh method takes a {@link string} formation as an input. If the last character is a vowel, it concatenates
-         * given formation with ş, if the last character is not a vowel, and not 't' it directly returns given formation, but if it
-         * is equal to 't', it transforms it to 'd'.</summary>
-         *
-         * <param name="formation">{@link string} input.</param>
-         * <returns>resolved string.</returns>
-         */
-        private string ResolveSh(string formation)
-        {
-            if (TurkishLanguage.IsVowel(formation[formation.Length - 1]))
-            {
-                return formation + 'ş';
-            }
-
-            if (formation[formation.Length - 1] != 't')
-                return formation;
-            return formation.Substring(0, formation.Length - 1) + 'd';
-        }
-
+        
         /**
          * <summary>An overridden ToString method which returns the with variable.</summary>
          *
