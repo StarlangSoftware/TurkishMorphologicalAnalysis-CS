@@ -199,7 +199,7 @@ namespace MorphologicalAnalysis
                 return root.TakesRelativeSuffixKu();
             }
 
-            if (_with == "dHr")
+            if (_with == "DHr")
             {
                 if (_toState.GetName() == "Adverb")
                 {
@@ -502,7 +502,8 @@ namespace MorphologicalAnalysis
                                     case 'k':
                                         //ahenk->ahengi, künk->küngü, renk->rengi, pelesenk->pelesengi
                                         if (StartWithVowelOrConsonantDrops() && rootWord &&
-                                            root.EndingKChangesIntoG() && !root.IsProperNoun())
+                                            root.EndingKChangesIntoG() && (!root.IsProperNoun() ||
+                                                                           !startState.ToString().Equals("ProperRoot")))
                                         {
                                             formation = stem.Substring(0, stem.Length - 1) + 'g';
                                         }

@@ -20,7 +20,7 @@ namespace Test
         [Test]
         public void TestStateCount()
         {
-            Assert.AreEqual(139, stateList.Count);
+            Assert.AreEqual(141, stateList.Count);
         }
         
         [Test]
@@ -33,7 +33,7 @@ namespace Test
                     endStateCount++;
                 }
             }
-            Assert.AreEqual(35, endStateCount);
+            Assert.AreEqual(37, endStateCount);
             var posCounts = new CounterHashMap<string>();
             foreach (var state in stateList){
                 if (state.GetPos() != null)
@@ -65,7 +65,7 @@ namespace Test
             foreach (var state in stateList){
                 transitionCount += fsm.GetTransitions(state).Count;
             }
-            Assert.AreEqual(778, transitionCount);
+            Assert.AreEqual(779, transitionCount);
         }
 
         [Test]

@@ -44,8 +44,8 @@ namespace MorphologicalAnalysis
             this._form = root.GetName();
             this._pos = startState.GetPos();
             this._initialPos = startState.GetPos();
-            _suffixList = new List<State> {startState};
-            _formList = new List<string> {this._form};
+            _suffixList = new List<State> { startState };
+            _formList = new List<string> { this._form };
             _transitionList = new List<string>();
             _withList = new List<string>();
         }
@@ -68,8 +68,8 @@ namespace MorphologicalAnalysis
             this._form = root.GetName();
             this._pos = startState.GetPos();
             this._initialPos = startState.GetPos();
-            _suffixList = new List<State> {startState};
-            _formList = new List<string> {this._form};
+            _suffixList = new List<State> { startState };
+            _formList = new List<string> { this._form };
             _transitionList = new List<string>();
             _withList = new List<string>();
         }
@@ -90,8 +90,8 @@ namespace MorphologicalAnalysis
             this._form = root.GetName();
             this._pos = startState.GetPos();
             this._initialPos = startState.GetPos();
-            _suffixList = new List<State> {startState};
-            _formList = new List<string> {this._form};
+            _suffixList = new List<State> { startState };
+            _formList = new List<string> { this._form };
             _transitionList = new List<string>();
             _withList = new List<string>();
         }
@@ -111,8 +111,8 @@ namespace MorphologicalAnalysis
             this._form = root.GetName();
             this._pos = startState.GetPos();
             this._initialPos = startState.GetPos();
-            _suffixList = new List<State> {startState};
-            _formList = new List<string> {this._form};
+            _suffixList = new List<State> { startState };
+            _formList = new List<string> { this._form };
             _transitionList = new List<string>();
             _withList = new List<string>();
         }
@@ -576,6 +576,12 @@ namespace MorphologicalAnalysis
          * If it is "DuplicateRoot", it assigns concatenation of first item of formList and +DUP to the result string.
          * Ex : Allak
          * <p/>
+         * If it is "CodeRoot", it assigns concatenation of first item of formList and +CODE to the result String.
+         * Ex : 5000-WX
+         * <p/>
+         * If it is "MetricRoot", it assigns concatenation of first item of formList and +METRIC to the result String.
+         * Ex : 6cmx12cm
+         * <p/>
          * If it is "QuestionRoot", it assigns concatenation of first item of formList and +QUES to the result string.
          * Ex : Mı
          * <p/>
@@ -719,107 +725,222 @@ namespace MorphologicalAnalysis
                                                                         }
                                                                         else
                                                                         {
-                                                                            if (_suffixList[0].GetName() == "HeaderRoot")
+                                                                            if (_suffixList[0].GetName() ==
+                                                                                "HeaderRoot")
                                                                             {
                                                                                 result = HeaderTransition();
                                                                             }
                                                                             else
                                                                             {
-                                                                                if (_suffixList[0].GetName() == "InterjectionRoot")
+                                                                                if (_suffixList[0].GetName() ==
+                                                                                 "InterjectionRoot")
                                                                                 {
                                                                                     result = _formList[0] + "+INTERJ";
                                                                                 }
                                                                                 else
                                                                                 {
-                                                                                    if (_suffixList[0].GetName() == "DuplicateRoot")
+                                                                                    if (_suffixList[0].GetName() ==
+                                                                                     "DuplicateRoot")
                                                                                     {
                                                                                         result = _formList[0] + "+DUP";
                                                                                     }
                                                                                     else
                                                                                     {
-                                                                                        if (_suffixList[0].GetName() == "QuestionRoot")
+                                                                                        if (_suffixList[0].GetName() ==
+                                                                                         "CodeRoot")
                                                                                         {
-                                                                                            result = "mi+QUES";
+                                                                                            result = _formList[0] +
+                                                                                                "+CODE";
                                                                                         }
                                                                                         else
                                                                                         {
-                                                                                            if (_suffixList[0].GetName() == "PostP")
+                                                                                            if (_suffixList[0]
+                                                                                                 .GetName() ==
+                                                                                             "MetricRoot")
                                                                                             {
-                                                                                                switch (_formList[0])
-                                                                                                {
-                                                                                                    case "karşı":
-                                                                                                    case "ilişkin":
-                                                                                                    case "göre":
-                                                                                                    case "kadar":
-                                                                                                    case "ait":
-                                                                                                    case "yönelik":
-                                                                                                    case "rağmen":
-                                                                                                    case "değin":
-                                                                                                    case "dek":
-                                                                                                    case "doğru":
-                                                                                                    case "karşın":
-                                                                                                    case "dair":
-                                                                                                    case "atfen":
-                                                                                                    case "binaen":
-                                                                                                    case "hitaben":
-                                                                                                    case "istinaden":
-                                                                                                    case "mahsuben":
-                                                                                                    case "mukabil":
-                                                                                                    case "nazaran":
-                                                                                                        result = _formList[0] + "+POSTP+PCDAT";
-                                                                                                        break;
-                                                                                                    case "sonra":
-                                                                                                    case "önce":
-                                                                                                    case "beri":
-                                                                                                    case "fazla":
-                                                                                                    case "dolayı":
-                                                                                                    case "itibaren":
-                                                                                                    case "başka":
-                                                                                                    case "çok":
-                                                                                                    case "evvel":
-                                                                                                    case "ötürü":
-                                                                                                    case "yana":
-                                                                                                    case "öte":
-                                                                                                    case "aşağı":
-                                                                                                    case "yukarı":
-                                                                                                    case "dışarı":
-                                                                                                    case "az":
-                                                                                                    case "gayrı":
-                                                                                                        result = _formList[0] + "+POSTP+PCABL";
-                                                                                                        break;
-                                                                                                    case "yanısıra":
-                                                                                                        result = _formList[0] + "+POSTP+PCGEN";
-                                                                                                        break;
-                                                                                                    case "birlikte":
-                                                                                                    case "beraber":
-                                                                                                        result = _formList[0] + "+POSTP+PCINS";
-                                                                                                        break;
-                                                                                                    case "aşkın":
-                                                                                                    case "takiben":
-                                                                                                        result = _formList[0] + "+POSTP+PCACC";
-                                                                                                        break;
-                                                                                                    default:
-                                                                                                        result = _formList[0] + "+POSTP+PCNOM";
-                                                                                                        break;
-                                                                                                }
+                                                                                                result = _formList[0] +
+                                                                                                    "+METRIC";
                                                                                             }
                                                                                             else
                                                                                             {
-                                                                                                if (_suffixList[0].GetName().StartsWith("PronounRoot"))
+                                                                                                if (_suffixList[0]
+                                                                                                     .GetName() ==
+                                                                                                 "QuestionRoot")
                                                                                                 {
-                                                                                                    result = PronounTransition();
+                                                                                                    result = "mi+QUES";
                                                                                                 }
                                                                                                 else
                                                                                                 {
-                                                                                                    if (_suffixList[0].GetName() == "OrdinalRoot")
+                                                                                                    if (_suffixList[0]
+                                                                                                         .GetName() ==
+                                                                                                     "PostP")
                                                                                                     {
-                                                                                                        result = _formList[0] + "+NUM+ORD";
+                                                                                                        switch
+                                                                                                            (_formList[
+                                                                                                                0])
+                                                                                                        {
+                                                                                                            case "karşı"
+                                                                                                                :
+                                                                                                            case
+                                                                                                                "ilişkin"
+                                                                                                                :
+                                                                                                            case "göre":
+                                                                                                            case "kadar"
+                                                                                                                :
+                                                                                                            case "ait":
+                                                                                                            case
+                                                                                                                "yönelik"
+                                                                                                                :
+                                                                                                            case
+                                                                                                                "rağmen"
+                                                                                                                :
+                                                                                                            case "değin"
+                                                                                                                :
+                                                                                                            case "dek":
+                                                                                                            case "doğru"
+                                                                                                                :
+                                                                                                            case
+                                                                                                                "karşın"
+                                                                                                                :
+                                                                                                            case "dair":
+                                                                                                            case "atfen"
+                                                                                                                :
+                                                                                                            case
+                                                                                                                "binaen"
+                                                                                                                :
+                                                                                                            case
+                                                                                                                "hitaben"
+                                                                                                                :
+                                                                                                            case
+                                                                                                                "istinaden"
+                                                                                                                :
+                                                                                                            case
+                                                                                                                "mahsuben"
+                                                                                                                :
+                                                                                                            case
+                                                                                                                "mukabil"
+                                                                                                                :
+                                                                                                            case
+                                                                                                                "nazaran"
+                                                                                                                :
+                                                                                                                result =
+                                                                                                                    _formList
+                                                                                                                        [0] +
+                                                                                                                    "+POSTP+PCDAT";
+                                                                                                                break;
+                                                                                                            case "sonra"
+                                                                                                                :
+                                                                                                            case "önce":
+                                                                                                            case "beri":
+                                                                                                            case "fazla"
+                                                                                                                :
+                                                                                                            case
+                                                                                                                "dolayı"
+                                                                                                                :
+                                                                                                            case
+                                                                                                                "itibaren"
+                                                                                                                :
+                                                                                                            case "başka"
+                                                                                                                :
+                                                                                                            case "çok":
+                                                                                                            case "evvel"
+                                                                                                                :
+                                                                                                            case "ötürü"
+                                                                                                                :
+                                                                                                            case "yana":
+                                                                                                            case "öte":
+                                                                                                            case "aşağı"
+                                                                                                                :
+                                                                                                            case
+                                                                                                                "yukarı"
+                                                                                                                :
+                                                                                                            case
+                                                                                                                "dışarı"
+                                                                                                                :
+                                                                                                            case "az":
+                                                                                                            case "gayrı"
+                                                                                                                :
+                                                                                                                result =
+                                                                                                                    _formList
+                                                                                                                        [0] +
+                                                                                                                    "+POSTP+PCABL";
+                                                                                                                break;
+                                                                                                            case
+                                                                                                                "yanısıra"
+                                                                                                                :
+                                                                                                                result =
+                                                                                                                    _formList
+                                                                                                                        [0] +
+                                                                                                                    "+POSTP+PCGEN";
+                                                                                                                break;
+                                                                                                            case
+                                                                                                                "birlikte"
+                                                                                                                :
+                                                                                                            case
+                                                                                                                "beraber"
+                                                                                                                :
+                                                                                                                result =
+                                                                                                                    _formList
+                                                                                                                        [0] +
+                                                                                                                    "+POSTP+PCINS";
+                                                                                                                break;
+                                                                                                            case "aşkın"
+                                                                                                                :
+                                                                                                            case
+                                                                                                                "takiben"
+                                                                                                                :
+                                                                                                                result =
+                                                                                                                    _formList
+                                                                                                                        [0] +
+                                                                                                                    "+POSTP+PCACC";
+                                                                                                                break;
+                                                                                                            default:
+                                                                                                                result =
+                                                                                                                    _formList
+                                                                                                                        [0] +
+                                                                                                                    "+POSTP+PCNOM";
+                                                                                                                break;
+                                                                                                        }
                                                                                                     }
                                                                                                     else
                                                                                                     {
-                                                                                                        if (_suffixList[0].GetName().StartsWith("Adjective"))
+                                                                                                        if (_suffixList[
+                                                                                                             0]
+                                                                                                         .GetName()
+                                                                                                         .StartsWith(
+                                                                                                             "PronounRoot"))
                                                                                                         {
-                                                                                                            result = _formList[0] + "+ADJ";
+                                                                                                            result =
+                                                                                                                PronounTransition();
+                                                                                                        }
+                                                                                                        else
+                                                                                                        {
+                                                                                                            if
+                                                                                                                (_suffixList
+                                                                                                                         [0]
+                                                                                                                     .GetName() ==
+                                                                                                                 "OrdinalRoot")
+                                                                                                            {
+                                                                                                                result =
+                                                                                                                    _formList
+                                                                                                                        [0] +
+                                                                                                                    "+NUM+ORD";
+                                                                                                            }
+                                                                                                            else
+                                                                                                            {
+                                                                                                                if
+                                                                                                                    (_suffixList
+                                                                                                                         [0]
+                                                                                                                     .GetName()
+                                                                                                                     .StartsWith(
+                                                                                                                         "Adjective"))
+                                                                                                                {
+                                                                                                                    result =
+                                                                                                                        _formList
+                                                                                                                            [0] +
+                                                                                                                        "+ADJ";
+                                                                                                                }
+                                                                                                            }
                                                                                                         }
                                                                                                     }
                                                                                                 }
@@ -845,7 +966,8 @@ namespace MorphologicalAnalysis
                 }
             }
 
-            foreach (var transition in _transitionList) {
+            foreach (var transition in _transitionList)
+            {
                 if (transition != null)
                 {
                     if (!transition.StartsWith("^"))
@@ -858,6 +980,7 @@ namespace MorphologicalAnalysis
                     }
                 }
             }
+
             return result;
         }
 
@@ -891,23 +1014,28 @@ namespace MorphologicalAnalysis
         public string WithList()
         {
             var result = root.GetName();
-            foreach (var aWith in _withList) {
+            foreach (var aWith in _withList)
+            {
                 result = result + "+" + aWith;
             }
+
             return result;
         }
-        
+
         /**
         * <summary>Replace root word of the current parse with the new root word and returns the new word.</summary>
         * <param name="newRoot"> Replaced root word</param>
         * <returns> Root word of the parse will be replaced with the newRoot and the resulting surface form is returned.</returns>
         */
-        public string ReplaceRootWord(TxtWord newRoot){
+        public string ReplaceRootWord(TxtWord newRoot)
+        {
             var result = newRoot.GetName();
-            foreach (var aWith in _withList){
+            foreach (var aWith in _withList)
+            {
                 var transition = new Transition(null, aWith, null);
                 result = transition.MakeTransition(newRoot, result);
             }
+
             return result;
         }
 

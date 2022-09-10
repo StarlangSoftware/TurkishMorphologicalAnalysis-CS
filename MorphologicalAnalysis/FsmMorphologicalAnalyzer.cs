@@ -282,7 +282,8 @@ namespace MorphologicalAnalysis
                 }
             }
 
-            if (rootWord && (root.GetName().Equals("ben") || root.GetName().Equals("sen") || root.LastIdropsDuringSuffixation() ||
+            if (rootWord && (root.GetName().Equals("ben") || root.GetName().Equals("sen") ||
+                             root.LastIdropsDuringSuffixation() ||
                              root.LastIdropsDuringPassiveSuffixation()))
             {
                 return distance <= MAX_DISTANCE;
@@ -326,6 +327,14 @@ namespace MorphologicalAnalysis
          * !isPlural, !isPortmanteau and isDuplicate, if root holds the conditions then it gets the state
          * with the name of DuplicateRoot.
          * Ex : Allak,
+         * <p/>
+         * !isPlural, !isPortmanteau and isCode, if root holds the conditions then it gets the state
+         * with the name of CodeRoot.
+         * Ex : 9400f,
+         * <p/>
+         * !isPlural, !isPortmanteau and isMetric, if root holds the conditions then it gets the state
+         * with the name of MetricRoot.
+         * Ex : 11x8x12,
          * <p/>
          * !isPlural, !isPortmanteau and isNumeral, if root holds the conditions then it gets the state
          * with the name of CardinalRoot.
@@ -508,6 +517,18 @@ namespace MorphologicalAnalysis
                         if (root.IsDuplicate())
                         {
                             currentFsmParse = new FsmParse(root, _finiteStateMachine.GetState("DuplicateRoot"));
+                            fsmParse.Add(currentFsmParse);
+                        }
+
+                        if (root.IsCode())
+                        {
+                            currentFsmParse = new FsmParse(root, _finiteStateMachine.GetState("CodeRoot"));
+                            fsmParse.Add(currentFsmParse);
+                        }
+
+                        if (root.IsMetric())
+                        {
+                            currentFsmParse = new FsmParse(root, _finiteStateMachine.GetState("MetricRoot"));
                             fsmParse.Add(currentFsmParse);
                         }
 
@@ -1661,7 +1682,7 @@ namespace MorphologicalAnalysis
                                                     {
                                                         TxtWord newWord = null;
                                                         if (_dictionary.GetWord(
-                                                            possibleRoot.ToLower(new CultureInfo("tr"))) != null)
+                                                                possibleRoot.ToLower(new CultureInfo("tr"))) != null)
                                                         {
                                                             ((TxtWord)_dictionary.GetWord(
                                                                     possibleRoot.ToLower(new CultureInfo("tr"))))

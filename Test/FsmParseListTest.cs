@@ -7,7 +7,7 @@ namespace Test
     public class FsmParseListTest
     {
         FsmParseList parse1, parse2, parse3, parse4, parse5, parse6, parse7, parse8, parse9, parse10, parse11, parse12, 
-            parse13, parse14;
+            parse13, parse14, parse15, parse16, parse17, parse18;
 
         [SetUp]
         public void Setup()
@@ -27,6 +27,10 @@ namespace Test
             parse12 = fsm.MorphologicalAnalysis("o");
             parse13 = fsm.MorphologicalAnalysis("arabası");
             parse14 = fsm.MorphologicalAnalysis("sana");
+            parse15 = fsm.MorphologicalAnalysis("açacağını");
+            parse16 = fsm.MorphologicalAnalysis("kollarımız");
+            parse17 = fsm.MorphologicalAnalysis("yapmamızı");
+            parse18 = fsm.MorphologicalAnalysis("koşmalıyız");
         }
 
         [Test]
@@ -66,6 +70,10 @@ namespace Test
             Assert.AreEqual(new Word("değerlendirme"), parse4.GetParseWithLongestRootWord().GetWord());
             Assert.AreEqual(new Word("soruşturma"), parse5.GetParseWithLongestRootWord().GetWord());
             Assert.AreEqual(new Word("karşılaştırmalı"), parse6.GetParseWithLongestRootWord().GetWord());
+            Assert.AreEqual(new Word("aç"), parse15.GetParseWithLongestRootWord().GetWord());
+            Assert.AreEqual(new Word("kol"), parse16.GetParseWithLongestRootWord().GetWord());
+            Assert.AreEqual(new Word("yap"), parse17.GetParseWithLongestRootWord().GetWord());
+            Assert.AreEqual(new Word("koş"), parse18.GetParseWithLongestRootWord().GetWord());
         }
 
         [Test]

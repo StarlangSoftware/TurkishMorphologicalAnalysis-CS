@@ -636,7 +636,18 @@ namespace MorphologicalAnalysis
         * Date : 11/06/2018
         */
         DATE,
-        
+
+        /**
+        * Code : i7-9700K
+        */
+        CODE,
+
+        /**
+        * Metric : 6cmx7cmx8cm
+        */
+        METRIC,
+
+
         NONE
     }
 }
