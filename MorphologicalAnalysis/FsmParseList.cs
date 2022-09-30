@@ -194,6 +194,10 @@ namespace MorphologicalAnalysis
         {
             var maxLength = -1;
             FsmParse bestParse = null;
+            if (_fsmParses.Count > 0)
+            {
+                bestParse = _fsmParses[0];
+            }
             foreach (var currentParse in _fsmParses)
             {
                 if (currentParse.GetWord().GetName().Length > maxLength && !IsLongestRootException(currentParse))
