@@ -83,7 +83,7 @@ namespace Test
         [Test]
         public void morphologicalAnalysisProperNoun()
         {
-            TxtDictionary dictionary = fsm.GetDictionary();
+            var dictionary = fsm.GetDictionary();
             for (var i = 0; i < dictionary.Size(); i++)
             {
                 var word = (TxtWord)dictionary.GetWord(i);
@@ -97,7 +97,7 @@ namespace Test
         [Test]
         public void morphologicalAnalysisNounSoftenDuringSuffixation()
         {
-            TxtDictionary dictionary = fsm.GetDictionary();
+            var dictionary = fsm.GetDictionary();
             for (var i = 0; i < dictionary.Size(); i++)
             {
                 var word = (TxtWord)dictionary.GetWord(i);
@@ -115,7 +115,7 @@ namespace Test
         [Test]
         public void morphologicalAnalysisVowelAChangesToIDuringYSuffixation()
         {
-            TxtDictionary dictionary = fsm.GetDictionary();
+            var dictionary = fsm.GetDictionary();
             for (var i = 0; i < dictionary.Size(); i++)
             {
                 var word = (TxtWord)dictionary.GetWord(i);

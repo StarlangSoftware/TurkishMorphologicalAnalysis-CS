@@ -922,6 +922,7 @@ namespace MorphologicalAnalysis
         private List<FsmParse> ParseWord(List<FsmParse> fsmParse, int maxLength)
         {
             var result = new List<FsmParse>();
+            var resultSuffixList = new List<string>();
             while (fsmParse.Count > 0)
             {
                 var currentFsmParse = fsmParse[0];
@@ -931,21 +932,13 @@ namespace MorphologicalAnalysis
                 var currentSurfaceForm = currentFsmParse.GetSurfaceForm();
                 if (currentState.IsEndState() && currentSurfaceForm.Length <= maxLength)
                 {
-                    var exists = false;
-                    int i;
-                    for (i = 0; i < result.Count; i++)
-                    {
-                        if (currentFsmParse.SuffixList().Equals(result[i].SuffixList()))
-                        {
-                            exists = true;
-                            break;
-                        }
-                    }
+                    var currentSuffixList = currentFsmParse.SuffixList();
 
-                    if (!exists)
+                    if (!resultSuffixList.Contains(currentSuffixList))
                     {
                         result.Add(currentFsmParse);
                         currentFsmParse.ConstructInflectionalGroups();
+                        resultSuffixList.Add(currentSuffixList);
                     }
                 }
 
@@ -966,6 +959,7 @@ namespace MorphologicalAnalysis
         private List<FsmParse> ParseWord(List<FsmParse> fsmParse, string surfaceForm)
         {
             var result = new List<FsmParse>();
+            var resultSuffixList = new List<string>();
             while (fsmParse.Count > 0)
             {
                 var currentFsmParse = fsmParse[0];
@@ -976,21 +970,12 @@ namespace MorphologicalAnalysis
                 if (currentState.IsEndState() &&
                     string.Equals(currentSurfaceForm, surfaceForm, StringComparison.Ordinal))
                 {
-                    var exists = false;
-                    int i;
-                    for (i = 0; i < result.Count; i++)
-                    {
-                        if (currentFsmParse.SuffixList().Equals(result[i].SuffixList()))
-                        {
-                            exists = true;
-                            break;
-                        }
-                    }
-
-                    if (!exists)
+                    var currentSuffixList = currentFsmParse.SuffixList();
+                    if (!resultSuffixList.Contains(currentSuffixList))
                     {
                         result.Add(currentFsmParse);
                         currentFsmParse.ConstructInflectionalGroups();
+                        resultSuffixList.Add(currentSuffixList);
                     }
                 }
 
