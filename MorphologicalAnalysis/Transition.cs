@@ -8,7 +8,6 @@ namespace MorphologicalAnalysis
         private readonly State _toState;
         private readonly string _with;
         private readonly string _withName;
-        private string _formationToCheck;
         private readonly string _toPos;
 
         /**
@@ -362,14 +361,14 @@ namespace MorphologicalAnalysis
                 }
             }
 
-            _formationToCheck = stem;
+            string formationToCheck;
             //---vowelEChangesToIDuringYSuffixation---
             //de->d(i)yor, ye->y(i)yor
             if (rootWord && WithFirstChar() == 'y' && root.VowelEChangesToIDuringYSuffixation() &&
                 (_with[1] != 'H' || root.GetName() == "ye"))
             {
                 formation = stem.Substring(0, stem.Length - 1) + 'i';
-                _formationToCheck = formation;
+                formationToCheck = formation;
             }
             else
             {
@@ -379,7 +378,7 @@ namespace MorphologicalAnalysis
                 if (rootWord && (_with == "Hl" || _with == "Hn") && root.LastIdropsDuringPassiveSuffixation())
                 {
                     formation = stem.Substring(0, stem.Length - 2) + stem[stem.Length - 1];
-                    _formationToCheck = stem;
+                    formationToCheck = stem;
                 }
                 else
                 {
@@ -389,7 +388,7 @@ namespace MorphologicalAnalysis
                         !_with.StartsWith("y"))
                     {
                         formation = stem + 'y';
-                        _formationToCheck = formation;
+                        formationToCheck = formation;
                     }
                     else
                     {
@@ -420,7 +419,7 @@ namespace MorphologicalAnalysis
                                 formation = stem + stem[stem.Length - 1];
                             }
 
-                            _formationToCheck = formation;
+                            formationToCheck = formation;
                         }
                         else
                         {
@@ -455,7 +454,7 @@ namespace MorphologicalAnalysis
                                     formation = stem.Substring(0, stem.Length - 2) + stem[stem.Length - 1];
                                 }
 
-                                _formationToCheck = stem;
+                                formationToCheck = stem;
                             }
                             else
                             {
@@ -523,7 +522,7 @@ namespace MorphologicalAnalysis
                                         break;
                                 }
 
-                                _formationToCheck = formation;
+                                formationToCheck = formation;
                             }
                         }
                     }
@@ -581,24 +580,24 @@ namespace MorphologicalAnalysis
                 switch (_with[i])
                 {
                     case 'D':
-                        formation = MorphotacticEngine.ResolveD(root, formation, _formationToCheck);
+                        formation = MorphotacticEngine.ResolveD(root, formation, formationToCheck);
                         break;
                     case 'A':
-                        formation = MorphotacticEngine.ResolveA(root, formation, rootWord, _formationToCheck);
+                        formation = MorphotacticEngine.ResolveA(root, formation, rootWord, formationToCheck);
                         break;
                     case 'H':
                         if (_with[0] != '\'')
                         {
-                            formation = MorphotacticEngine.ResolveH(root, formation, i == 0, _with.StartsWith("Hyor"), rootWord, _formationToCheck);
+                            formation = MorphotacticEngine.ResolveH(root, formation, i == 0, _with.StartsWith("Hyor"), rootWord, formationToCheck);
                         }
                         else
                         {
-                            formation = MorphotacticEngine.ResolveH(root, formation, i == 1, false, rootWord, _formationToCheck);
+                            formation = MorphotacticEngine.ResolveH(root, formation, i == 1, false, rootWord, formationToCheck);
                         }
 
                         break;
                     case 'C':
-                        formation = MorphotacticEngine.ResolveC(formation, _formationToCheck);
+                        formation = MorphotacticEngine.ResolveC(formation, formationToCheck);
                         break;
                     case 'S':
                         formation = MorphotacticEngine.ResolveS(formation);
@@ -619,7 +618,7 @@ namespace MorphologicalAnalysis
                         break;
                 }
 
-                _formationToCheck = formation;
+                formationToCheck = formation;
             }
 
             return formation;
