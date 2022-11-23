@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageId>NlpToolkit-MorphologicalAnalysis</PackageId>
-        <PackageVersion>1.0.21</PackageVersion>
+        <PackageVersion>1.0.22</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>
