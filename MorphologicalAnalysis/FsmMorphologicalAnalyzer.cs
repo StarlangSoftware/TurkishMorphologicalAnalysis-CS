@@ -1355,11 +1355,25 @@ namespace MorphologicalAnalysis
                    surfaceForm[0] == '\u011e' || surfaceForm[0] == '\u015e' ||
                    surfaceForm[0] == '\u00c7' || surfaceForm[0] == '\u00d6'; // İ, Ü, Ğ, Ş, Ç, Ö
         }
+        
+        /**
+        * <summary>The isCode method takes surfaceForm string as input and checks if it consists of both letters and numbers.</summary>
+        *
+        * <param name="surfaceForm"> string to check for code-like word.</param>
+        * <returns> true if it is a code-like word, return false otherwise.</returns>
+        */
+        public bool IsCode(string surfaceForm) {
+            if (string.IsNullOrEmpty(surfaceForm)) {
+                return false;
+            }
+            return PatternMatches(".*[0-9].*", surfaceForm) && PatternMatches(".*[a-zA-ZçöğüşıÇÖĞÜŞİ].*", surfaceForm);
+        }
 
         /**
          * <summary>The robustMorphologicalAnalysis is used to analyse surfaceForm string. First it gets the currentParse of the surfaceForm
          * then, if the size of the currentParse is 0, and given surfaceForm is a proper noun, it adds the surfaceForm
-         * whose state name is ProperRoot to an {@link ArrayList}, of it is not a proper noon, it adds the surfaceForm
+         * whose state name is ProperRoot to an {@link ArrayList}, if it is a code-like word, it adds the surfaceForm
+         * whose state name is CodeRoot to the {@link ArrayList} and if it is neither, it adds the surfaceForm
          * whose state name is NominalRoot to the {@link ArrayList}.</summary>
          *
          * <param name="surfaceForm">string to analyse.</param>
@@ -1381,11 +1395,14 @@ namespace MorphologicalAnalysis
                     fsmParse.Add(new FsmParse(surfaceForm, _finiteStateMachine.GetState("ProperRoot")));
                     return new FsmParseList(ParseWord(fsmParse, surfaceForm));
                 }
-
+                if (IsCode(surfaceForm))
+                {
+                    fsmParse.Add(new FsmParse(surfaceForm, _finiteStateMachine.GetState("CodeRoot")));
+                    return new FsmParseList(ParseWord(fsmParse, surfaceForm));
+                }
                 fsmParse.Add(new FsmParse(surfaceForm, _finiteStateMachine.GetState("NominalRoot")));
                 return new FsmParseList(ParseWord(fsmParse, surfaceForm));
             }
-
             return currentParse;
         }
 
@@ -1442,7 +1459,7 @@ namespace MorphologicalAnalysis
         }
 
         /**
-         * <summary>The isInteger method compares input surfaceForm with regex \+?\d+ and returns the result.
+         * <summary>The isInteger method compares input surfaceForm with regex [-+]?\d+ and returns the result.
          * Supports positive integer checks only.</summary>
          *
          * <param name="surfaceForm">string to check.</param>
@@ -1450,12 +1467,12 @@ namespace MorphologicalAnalysis
          */
         private bool IsInteger(string surfaceForm)
         {
-            if (!PatternMatches("\\+?\\d+", surfaceForm))
+            if (!PatternMatches("[-+]?\\d+", surfaceForm))
                 return false;
             var len = surfaceForm.Length;
             if (len < 10)
             {
-                return true; //Most common scenario. Return after a single check.
+                return true;
             }
 
             if (len > 10)
@@ -1467,14 +1484,14 @@ namespace MorphologicalAnalysis
         }
 
         /**
-         * <summary>The isDouble method compares input surfaceForm with regex \+?(\d+)?\.\d* and returns the result.</summary>
+         * <summary>The isDouble method compares input surfaceForm with regex ([-+]?\\d+\\.\\d+)|(\\d*\\.\\d+) and returns the result.</summary>
          *
          * <param name="surfaceForm">string to check.</param>
          * <returns>true if surfaceForm matches with the regex.</returns>
          */
         private bool IsDouble(string surfaceForm)
         {
-            return PatternMatches("\\+?(\\d+)?\\.\\d*", surfaceForm);
+            return PatternMatches("([-+]?\\d+\\.\\d+)|(\\d*\\.\\d+)", surfaceForm);
         }
 
         /**
