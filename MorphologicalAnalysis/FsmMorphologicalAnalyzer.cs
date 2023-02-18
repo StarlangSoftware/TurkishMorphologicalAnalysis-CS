@@ -1393,14 +1393,18 @@ namespace MorphologicalAnalysis
                 if (IsProperNoun(surfaceForm))
                 {
                     fsmParse.Add(new FsmParse(surfaceForm, _finiteStateMachine.GetState("ProperRoot")));
-                    return new FsmParseList(ParseWord(fsmParse, surfaceForm));
                 }
-                if (IsCode(surfaceForm))
+                else
                 {
-                    fsmParse.Add(new FsmParse(surfaceForm, _finiteStateMachine.GetState("CodeRoot")));
-                    return new FsmParseList(ParseWord(fsmParse, surfaceForm));
+                    if (IsCode(surfaceForm))
+                    {
+                        fsmParse.Add(new FsmParse(surfaceForm, _finiteStateMachine.GetState("CodeRoot")));
+                    }
+                    else
+                    {
+                        fsmParse.Add(new FsmParse(surfaceForm, _finiteStateMachine.GetState("NominalRoot")));
+                    }
                 }
-                fsmParse.Add(new FsmParse(surfaceForm, _finiteStateMachine.GetState("NominalRoot")));
                 return new FsmParseList(ParseWord(fsmParse, surfaceForm));
             }
             return currentParse;
