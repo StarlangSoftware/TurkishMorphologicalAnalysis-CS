@@ -187,8 +187,8 @@ namespace MorphologicalAnalysis
                 return formation + 'ü';
             }
 
-            if (TurkishLanguage.IsFrontUnroundedVowel(Word.LastVowel(formationToCheck)) ||
-                (Word.LastVowel(formationToCheck) == 'a' && root.NotObeysVowelHarmonyDuringAgglutination()))
+            if ((TurkishLanguage.IsFrontUnroundedVowel(Word.LastVowel(formationToCheck)) && !root.NotObeysVowelHarmonyDuringAgglutination()) ||
+                ((Word.LastVowel(formationToCheck) == 'a' || Word.LastVowel(formationToCheck) == 'â') && root.NotObeysVowelHarmonyDuringAgglutination()))
             {
                 return formation + 'i';
             }
@@ -198,7 +198,7 @@ namespace MorphologicalAnalysis
                 return formation + 'u';
             }
 
-            if (TurkishLanguage.IsBackUnroundedVowel(Word.LastVowel(formationToCheck)))
+            if (TurkishLanguage.IsBackUnroundedVowel(Word.LastVowel(formationToCheck)) || (TurkishLanguage.IsFrontUnroundedVowel(Word.LastVowel(formationToCheck)) && root.NotObeysVowelHarmonyDuringAgglutination()))
             {
                 return formation + 'ı';
             }

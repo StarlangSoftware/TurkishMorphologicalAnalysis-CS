@@ -53,6 +53,17 @@ namespace Test
         }
 
         [Test]
+        public void morphologicalAnalysisSpecialProperNoun()
+        {
+            Assert.True(fsm.MorphologicalAnalysis("Times'ın").Size() != 0);
+            Assert.True(fsm.MorphologicalAnalysis("Times'tır").Size() != 0);
+            Assert.True(fsm.MorphologicalAnalysis("Times'mış").Size() != 0);
+            Assert.True(fsm.MorphologicalAnalysis("Twitter'ın").Size() != 0);
+            Assert.True(fsm.MorphologicalAnalysis("Twitter'dır").Size() != 0);
+            Assert.True(fsm.MorphologicalAnalysis("Twitter'mış").Size() != 0);
+        }
+
+        [Test]
         public void morphologicalAnalysisDataTimeNumber()
         {
             Assert.True(fsm.MorphologicalAnalysis("3/4").Size() != 0);
