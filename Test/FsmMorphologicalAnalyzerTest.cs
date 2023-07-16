@@ -53,6 +53,15 @@ namespace Test
         }
 
         [Test]
+        public void morphologicalAnalysisNewWords()
+        {
+            Assert.True(fsm.RobustMorphologicalAnalysis("googlecılardan").Size() != 0);
+            Assert.True(fsm.RobustMorphologicalAnalysis("zaptıraplaştırılmayana").Size() != 0);
+            Assert.True(fsm.RobustMorphologicalAnalysis("abzürtleşenmiş").Size() != 0);
+            Assert.True(fsm.RobustMorphologicalAnalysis("vışlığından").Size() != 0);
+        }
+        
+        [Test]
         public void morphologicalAnalysisSpecialProperNoun()
         {
             Assert.True(fsm.MorphologicalAnalysis("Times'ın").Size() != 0);

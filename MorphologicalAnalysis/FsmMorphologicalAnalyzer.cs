@@ -13,6 +13,7 @@ namespace MorphologicalAnalysis
     public class FsmMorphologicalAnalyzer
     {
         private readonly Trie _dictionaryTrie;
+        private Trie _suffixTrie;
         private readonly FiniteStateMachine _finiteStateMachine;
         private static int MAX_DISTANCE = 2;
         private Dictionary<string, string> parsedSurfaceForms = null;
@@ -73,8 +74,9 @@ namespace MorphologicalAnalysis
          */
         public FsmMorphologicalAnalyzer(string fileName, TxtDictionary dictionary, int cacheSize)
         {
-            this._dictionary = dictionary;
+            _dictionary = dictionary;
             _finiteStateMachine = new FiniteStateMachine(fileName);
+            PrepareSuffixTrie();
             _dictionaryTrie = dictionary.PrepareTrie();
             if (cacheSize > 0)
             {
@@ -109,6 +111,33 @@ namespace MorphologicalAnalysis
         {
         }
 
+        private string ReverseString(string s)
+        {
+            var result = "";
+            for (var i = s.Length - 1; i >= 0; i--)
+            {
+                result += s[i];
+            }
+
+            return result;
+        }
+
+        private void PrepareSuffixTrie()
+        {
+            _suffixTrie = new Trie();
+            var assembly = typeof(FiniteStateMachine).Assembly;
+            var stream = assembly.GetManifestResourceStream("MorphologicalAnalysis.suffixes.txt");
+            var streamReader = new StreamReader(stream);
+            var suffix = streamReader.ReadLine();
+            while (suffix != null)
+            {
+                var reverseSuffix = ReverseString(suffix);
+                _suffixTrie.AddWord(reverseSuffix, new Word(reverseSuffix));
+                suffix = streamReader.ReadLine();
+            }
+            streamReader.Close();
+        }
+
         public void AddParsedSurfaceForms(string fileName)
         {
             parsedSurfaceForms = new Dictionary<string, string>();
@@ -122,6 +151,7 @@ namespace MorphologicalAnalysis
                 parsedSurfaceForms[items[0]] = items[1];
                 line = streamReader.ReadLine();
             }
+            streamReader.Close();
         }
 
         /**
@@ -1355,7 +1385,7 @@ namespace MorphologicalAnalysis
                    surfaceForm[0] == '\u011e' || surfaceForm[0] == '\u015e' ||
                    surfaceForm[0] == '\u00c7' || surfaceForm[0] == '\u00d6'; // İ, Ü, Ğ, Ş, Ç, Ö
         }
-        
+
         /**
         * <summary>The isCode method takes surfaceForm string as input and checks if it consists of both letters and numbers.</summary>
         *
@@ -1368,6 +1398,32 @@ namespace MorphologicalAnalysis
             }
             return PatternMatches(".*[0-9].*", surfaceForm) && PatternMatches(".*[a-zA-ZçöğüşıÇÖĞÜŞİ].*", surfaceForm);
         }
+        
+        private TxtWord RootOfPossiblyNewWord(string surfaceForm){
+            var words = _suffixTrie.GetWordsWithPrefix(ReverseString(surfaceForm));
+            var maxLength = 0;
+            string longestWord = null;
+            foreach (var word in words){
+                if (word.GetName().Length > maxLength){
+                    longestWord = surfaceForm.Substring(0, surfaceForm.Length - word.GetName().Length);
+                    maxLength = word.GetName().Length;
+                }
+            }
+            if (maxLength != 0){
+                TxtWord newWord;
+                if (longestWord.EndsWith("ğ")){
+                    longestWord = longestWord.Substring(0, longestWord.Length - 1) + "k";
+                    newWord = new TxtWord(longestWord, "CL_ISIM");
+                    newWord.AddFlag("IS_SD");
+                } else {
+                    newWord = new TxtWord(longestWord, "CL_ISIM");
+                    newWord.AddFlag("CL_FIIL");
+                }
+                _dictionaryTrie.AddWord(longestWord, newWord);
+                return newWord;
+            }
+            return null;
+        } 
 
         /**
          * <summary>The robustMorphologicalAnalysis is used to analyse surfaceForm string. First it gets the currentParse of the surfaceForm
@@ -1402,7 +1458,16 @@ namespace MorphologicalAnalysis
                     }
                     else
                     {
-                        fsmParse.Add(new FsmParse(surfaceForm, _finiteStateMachine.GetState("NominalRoot")));
+                        var newRoot = RootOfPossiblyNewWord(surfaceForm);
+                        if (newRoot != null)
+                        {
+                            fsmParse.Add(new FsmParse(newRoot, _finiteStateMachine.GetState("VerbalRoot")));
+                            fsmParse.Add(new FsmParse(newRoot, _finiteStateMachine.GetState("NominalRoot")));
+                        }
+                        else
+                        {
+                            fsmParse.Add(new FsmParse(surfaceForm, _finiteStateMachine.GetState("NominalRoot")));
+                        }
                     }
                 }
                 return new FsmParseList(ParseWord(fsmParse, surfaceForm));

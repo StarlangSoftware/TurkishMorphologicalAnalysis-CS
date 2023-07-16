@@ -10,6 +10,8 @@
     <ItemGroup>
       <None Remove="turkish_finite_state_machine.xml" />
       <EmbeddedResource Include="turkish_finite_state_machine.xml" />
+      <None Remove="suffixes.txt" />
+      <EmbeddedResource Include="suffixes.txt" />
     </ItemGroup>
 
     <ItemGroup>
