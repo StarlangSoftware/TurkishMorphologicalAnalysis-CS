@@ -168,6 +168,12 @@ namespace MorphologicalAnalysis
             return true;
         }
 
+        /// <summary>
+        /// The transitionPossible method takes root and current parse as inputs. It then checks some special cases.
+        /// </summary>
+        /// <param name="root">Current root word</param>
+        /// <param name="fromState">From which state we arrived to this state.</param>
+        /// <returns>true if transition is possible false otherwise</returns>
         public bool TransitionPossible(TxtWord root, State fromState)
         {
             if (root.IsAdjective() && (root.IsNominal() && !root.IsExceptional() || root.IsPronoun()) &&
@@ -332,6 +338,23 @@ namespace MorphologicalAnalysis
             return MakeTransition(root, stem, new State("NominalRoot", true, false));
         }
 
+        /// <summary>
+        /// The method is main driving method to accomplish the current transition from one state to another depending on
+        /// the root form of the word, current value of the word form, and the type of the start state. The method
+        /// (a) returns the original word form if the transition is an epsilon transition, (b) adds 'nunla' if the current
+        /// stem is 'bu', 'şu' or 'o', (c) returns 'bana' or 'sana' if the current stem is 'ben' or 'sen' respectively.
+        /// For other cases, the method first modifies current stem and then adds the transition using special metamorpheme
+        /// resolving methods. These cases are: (d) Converts 'y' of the first character of the transition to 'i' if the
+        /// current stem is 'ye' or 'de'. (e) Drops the last two characters and adds last character when the transition is
+        ///  ('Hl' or 'Hn') and last 'I' drops during passive suffixation. (f) Adds 'y' character when the word ends with 'su'
+        /// and the transition does not start with 'y'. (g) Adds the last character again when the root duplicates during
+        /// suffixation. (h) Drops the last two characters and adds the last character when last 'i' drops during
+        /// suffixation. (i) Replaces the last character with a soft one when the root soften during suffixation.
+        /// </summary>
+        /// <param name="root">Root of the current word form</param>
+        /// <param name="stem">Current word form</param>
+        /// <param name="startState">The state from which this Fsm morphological analysis search has started.</param>
+        /// <returns>The current value of the word form after this transition is completed in the finite state machine.</returns>
         public string MakeTransition(TxtWord root, string stem, State startState)
         {
             var rootWord = root.GetName() == stem || root.GetName() + "'" == stem;

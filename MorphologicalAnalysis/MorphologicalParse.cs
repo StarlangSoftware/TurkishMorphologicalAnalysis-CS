@@ -32,20 +32,20 @@ namespace MorphologicalAnalysis
          * adds the substring to the iGs {@link ArrayList} and continue to use given String from 4th index. If it does not contain ^DB+,
          * it directly adds the given String to the iGs {@link ArrayList}. Then, it creates a new {@link ArrayList} as
          * inflectionalGroups and checks for some cases.
-         * <p/>
+         * <p>
          * If the first item of iGs {@link ArrayList} is ++Punc, it creates a new root as +, and by calling
          * {@link InflectionalGroup} method with Punc it initializes the IG {@link ArrayList} by parsing given input
          * String IG by + and calling the getMorphologicalTag method with these substrings. If getMorphologicalTag method returns
          * a tag, it adds this tag to the IG {@link ArrayList} and also to the inflectionalGroups {@link ArrayList}.
-         * <p/>
+         * </p><p>
          * If the first item of iGs {@link ArrayList} has +, it creates a new word of first item's substring from index 0 to +,
          * and assigns it to root. Then, by calling {@link InflectionalGroup} method with substring from index 0 to +,
          * it initializes the IG {@link ArrayList} by parsing given input String IG by + and calling the getMorphologicalTag
          * method with these substrings. If getMorphologicalTag method returns a tag, it adds this tag to the IG {@link ArrayList}
          * and also to the inflectionalGroups {@link ArrayList}.
-         * <p/>
+         * </p><p>
          * If the first item of iGs {@link ArrayList} does not contain +, it creates a new word with first item and assigns it as root.
-         * <p/>
+         * </p>
          * At the end, it loops through the items of iGs and by calling {@link InflectionalGroup} method with these items
          * it initializes the IG {@link ArrayList} by parsing given input String IG by + and calling the getMorphologicalTag
          * method with these substrings. If getMorphologicalTag method returns a tag, it adds this tag to the IG {@link ArrayList}
@@ -98,11 +98,11 @@ namespace MorphologicalAnalysis
          * method with these substrings. If getMorphologicalTag method returns a tag, it adds this tag to the IG {@link ArrayList}
          * and also to the inflectionalGroups {@link ArrayList}. However, if the first item does not contain +, it directly prints out
          * indicating that there is no root for that item of this Inflectional Group.
-         * <p/>
+         * <p>
          * At the end, it loops through the items of inflectionalGroups and by calling {@link InflectionalGroup} method with these items
          * it initializes the IG {@link ArrayList} by parsing given input String IG by + and calling the getMorphologicalTag
          * method with these substrings. If getMorphologicalTag method returns a tag, it adds this tag to the IG {@link ArrayList}
-         * and also to the inflectionalGroups {@link ArrayList}.</summary>
+         * and also to the inflectionalGroups {@link ArrayList}.</p></summary>
          *
          * <param name="inflectionalGroups">{@link ArrayList} input.</param>
          */
@@ -659,6 +659,12 @@ namespace MorphologicalAnalysis
             return "-XXX-";
         }
 
+        /// <summary>
+        /// Returns the pronoun type of the parse for universal dependency feature ProType.
+        /// </summary>
+        /// <returns>"Art" if the pronoun is also a determiner; "Prs" if the pronoun is personal pronoun; "Rcp" if the
+        /// pronoun is 'birbiri'; "Ind" if the pronoun is an indeterminate pronoun; "Neg" if the pronoun is 'hiçbiri';
+        /// "Int" if the pronoun is a question pronoun; "Dem" if the pronoun is a demonstrative pronoun.</returns>
         private string GetPronType()
         {
             var lemma = root.GetName();
@@ -687,6 +693,11 @@ namespace MorphologicalAnalysis
             return null;
         }
 
+        /// <summary>
+        /// Returns the numeral type of the parse for universal dependency feature NumType.
+        /// </summary>
+        /// <returns>"Ord" if the parse is Time, Ordinal or the word is '%' or 'kaçıncı'; "Dist" if the word is a
+        /// distributive number such as 'beşinci'; "Card" if the number is cardinal or any number or the word is 'kaç'.</returns>
         private string GetNumType()
         {
             var lemma = root.GetName();
@@ -707,7 +718,11 @@ namespace MorphologicalAnalysis
 
             return null;
         }
-
+        
+        /// <summary>
+        /// Returns the value for the dependency feature Reflex.
+        /// </summary>
+        /// <returns>"Yes" if the root word is 'kendi', null otherwise.</returns>
         private string GetReflex()
         {
             var lemma = root.GetName();
@@ -719,6 +734,11 @@ namespace MorphologicalAnalysis
             return null;
         }
 
+        /// <summary>
+        /// Returns the agreement of the parse for the universal dependency feature Number.
+        /// </summary>
+        /// <returns>"Sing" if the agreement of the parse is singular (contains A1SG, A2SG, A3SG); "Plur" if the agreement
+        /// of the parse is plural (contains A1PL, A2PL, A3PL).</returns>
         private string GetNumber()
         {
             if (ContainsTag(MorphologicalTag.A1SG) || ContainsTag(MorphologicalTag.A2SG) ||
@@ -740,6 +760,11 @@ namespace MorphologicalAnalysis
             return null;
         }
 
+        /// <summary>
+        /// Returns the case marking of the parse for the universal dependency feature case.
+        /// </summary>
+        /// <returns>"Acc" for accusative marker; "Dat" for dative marker; "Gen" for genitive marker; "Loc" for locative
+        /// marker; "Ins" for instrumentative marker; "Abl" for ablative marker; "Nom" for nominative marker.</returns>
         private string GetCase()
         {
             if (ContainsTag(MorphologicalTag.ACCUSATIVE) || ContainsTag(MorphologicalTag.PCACCUSATIVE))
@@ -780,6 +805,11 @@ namespace MorphologicalAnalysis
             return null;
         }
 
+        /// <summary>
+        /// Returns the definiteness of the parse for the universal dependency feature definite. It applies only for
+        /// determiners in Turkish.
+        /// </summary>
+        /// <returns>"Ind" for 'bir', 'bazı', or 'birkaç'. "Def" for 'her', 'bu', 'şu', 'o', 'bütün'.</returns>
         private string GetDefinite()
         {
             var lemma = root.GetName();
@@ -800,6 +830,10 @@ namespace MorphologicalAnalysis
             return null;
         }
 
+        /// <summary>
+        /// Returns the degree of the parse for the universal dependency feature degree.
+        /// </summary>
+        /// <returns>"Cmp" for comparative adverb 'daha'; "Sup" for superlative adjective or adverb 'en'.</returns>
         private string GetDegree()
         {
             var lemma = root.GetName();
@@ -816,6 +850,10 @@ namespace MorphologicalAnalysis
             return null;
         }
 
+        /// <summary>
+        /// Returns the polarity of the verb for the universal dependency feature polarity.
+        /// </summary>
+        /// <returns>"Pos" for positive polarity containing tag POS; "Neg" for negative polarity containing tag NEG.</returns>
         private string GetPolarity()
         {
             if (ContainsTag(MorphologicalTag.POSITIVE))
@@ -831,6 +869,10 @@ namespace MorphologicalAnalysis
             return null;
         }
 
+        /// <summary>
+        /// Returns the person of the agreement of the parse for the universal dependency feature person.
+        /// </summary>
+        /// <returns>"1" for first person; "2" for second person; "3" for third person.</returns>
         private string GetPerson()
         {
             if (ContainsTag(MorphologicalTag.A1SG) || ContainsTag(MorphologicalTag.A1PL)
@@ -857,6 +899,12 @@ namespace MorphologicalAnalysis
             return null;
         }
 
+        /// <summary>
+        /// Returns the voice of the verb parse for the universal dependency feature voice.
+        /// </summary>
+        /// <returns>"CauPass" if the verb parse is both causative and passive; "Pass" if the verb parse is only passive;
+        /// "Rcp" if the verb parse is reciprocal; "Cau" if the verb parse is only causative; "Rfl" if the verb parse is
+        /// reflexive.</returns>
         private string GetVoice()
         {
             if (ContainsTag(MorphologicalTag.PASSIVE))
@@ -882,6 +930,11 @@ namespace MorphologicalAnalysis
             return null;
         }
 
+        /// <summary>
+        /// Returns the aspect of the verb parse for the universal dependency feature aspect.
+        /// </summary>
+        /// <returns>"Perf" for past, narrative and future tenses; "Prog" for progressive tenses; "Hab" for Aorist; "Rapid"
+        /// for parses containing HASTILY tag; "Dur" for parses containing START, STAY or REPEAT tags.</returns>
         private string GetAspect()
         {
             if (ContainsTag(MorphologicalTag.PASTTENSE) || ContainsTag(MorphologicalTag.NARRATIVE) ||
@@ -914,6 +967,11 @@ namespace MorphologicalAnalysis
             return null;
         }
 
+        /// <summary>
+        /// Returns the tense of the verb parse for universal dependency feature tense.
+        /// </summary>
+        /// <returns>"Past" for simple past tense; "Fut" for future tense; "Pqp" for narrative past tense; "Pres" for other
+        /// past tenses.</returns>
         private string GetTense()
         {
             if (ContainsTag(MorphologicalTag.PASTTENSE))
@@ -939,6 +997,19 @@ namespace MorphologicalAnalysis
             return null;
         }
 
+        /// <summary>
+        /// Returns the modality of the verb parse for the universal dependency feature mood.
+        /// </summary>
+        /// <returns>"GenNecPot" if both necessitative and potential is combined with a suffix of general modality;
+        /// "CndGenPot" if both conditional and potential is combined with a suffix of general modality;
+        /// "GenNec" if necessitative is combined with a suffix of general modality;
+        /// "GenPot" if potential is combined with a suffix of general modality;
+        /// "NecPot" if necessitative is combined with potential;
+        /// "DesPot" if desiderative is combined with potential;
+        /// "CndPot" if conditional is combined with potential;
+        /// "CndGen" if conditional is combined with a suffix of general modality;
+        /// "Imp" for imperative; "Cnd" for simple conditional; "Des" for simple desiderative; "Opt" for optative; "Nec" for
+        /// simple necessitative; "Pot" for simple potential; "Gen" for simple suffix of a general modality.</returns>
         private string GetMood()
         {
             if (ContainsTag(MorphologicalTag.IMPERATIVE))
@@ -975,6 +1046,11 @@ namespace MorphologicalAnalysis
             return null;
         }
 
+        /// <summary>
+        /// Returns the form of the verb parse for the universal dependency feature verbForm.
+        /// </summary>
+        /// <returns>"Part" for participles; "Vnoun" for infinitives; "Conv" for parses contaning tags SINCEDOINGSO,
+        /// WITHOUTHAVINGDONESO, WITHOUTBEINGABLETOHAVEDONESO, BYDOINGSO, AFTERDOINGSO, INFINITIVE3; "Fin" for others.</returns>
         private string GetVerbForm()
         {
             if (ContainsTag(MorphologicalTag.PASTPARTICIPLE) || ContainsTag(MorphologicalTag.FUTUREPARTICIPLE) ||
@@ -993,6 +1069,12 @@ namespace MorphologicalAnalysis
             return null;
         }
 
+        /// <summary>
+        /// Construct the universal dependency features as an array of strings. Each element represents a single feature.
+        /// Every feature is given as featureType = featureValue.
+        /// </summary>
+        /// <param name="uPos">Universal dependency part of speech tag for the parse.</param>
+        /// <returns>An array of universal dependency features for this parse.</returns>
         public List<string> GetUniversalDependencyFeatures(string uPos)
         {
             var featureList = new List<string>();
@@ -1096,6 +1178,12 @@ namespace MorphologicalAnalysis
             return featureList;
         }
 
+        /// <summary>
+        /// Returns the universal dependency part of speech for this parse.
+        /// </summary>
+        /// <returns>"AUX" for word 'değil; "PROPN" for proper nouns; "NOUN for nouns; "ADJ" for adjectives; "ADV" for
+        /// adverbs; "INTJ" for interjections; "VERB" for verbs; "PUNCT" for punctuation symbols; "DET" for determiners;
+        /// "NUM" for numerals; "PRON" for pronouns; "ADP" for post participles; "SCONJ" or "CCONJ" for conjunctions.</returns>
         public string GetUniversalDependencyPos()
         {
             String lemma = root.GetName();

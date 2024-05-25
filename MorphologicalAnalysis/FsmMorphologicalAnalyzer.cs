@@ -16,7 +16,7 @@ namespace MorphologicalAnalysis
         private Trie _suffixTrie;
         private readonly FiniteStateMachine _finiteStateMachine;
         private static int MAX_DISTANCE = 2;
-        private Dictionary<string, string> parsedSurfaceForms = null;
+        private Dictionary<string, string> parsedSurfaceForms;
         private readonly TxtDictionary _dictionary;
         private readonly LRUCache<string, FsmParseList> _cache;
         private readonly Dictionary<string, Regex> _mostUsedPatterns = new Dictionary<string, Regex>();
@@ -110,7 +110,12 @@ namespace MorphologicalAnalysis
             10000000)
         {
         }
-
+        
+        /// <summary>
+        /// Constructs and returns the reverse string of a given string.
+        /// </summary>
+        /// <param name="s">String to be reversed.</param>
+        /// <returns>Reverse of a given string.</returns>
         private string ReverseString(string s)
         {
             var result = "";
@@ -122,6 +127,11 @@ namespace MorphologicalAnalysis
             return result;
         }
 
+        /// <summary>
+        /// Constructs the suffix trie from the input file suffixes.txt. suffixes.txt contains the most frequent 6000
+        /// suffixes that a verb or a noun can take. The suffix trie is a trie that stores these suffixes in reverse form,
+        /// which can be then used to match a given word for its possible suffix content.
+        /// </summary>
         private void PrepareSuffixTrie()
         {
             _suffixTrie = new Trie();
@@ -138,6 +148,11 @@ namespace MorphologicalAnalysis
             streamReader.Close();
         }
 
+        /// <summary>
+        /// Reads the file for correct surface forms and their most frequent root forms, in other words, the surface forms
+        /// which have at least one morphological analysis in Turkish.
+        /// </summary>
+        /// <param name="fileName">Input file containing analyzable surface forms and their root forms.</param>
         public void AddParsedSurfaceForms(string fileName)
         {
             parsedSurfaceForms = new Dictionary<string, string>();
@@ -272,21 +287,22 @@ namespace MorphologicalAnalysis
         }
 
         /**
-         * <summary>The isPossibleSubstring method first checks whether given short and long strings are equal to root word.
+         * <summary><p>The isPossibleSubstring method first checks whether given short and long strings are equal to root word.
          * Then, compares both short and long strings' chars till the last two chars of short string. In the presence of mismatch,
          * false is returned. On the other hand, it counts the distance between two strings until it becomes greater than 2,
          * which is the MAX_DISTANCE also finds the index of the last char.
-         * <p/>
+         * </p><p>
          * If the substring is a rootWord and.Equals to 'ben', which is a special case or root holds the lastIdropsDuringSuffixation or
          * lastIdropsDuringPassiveSuffixation conditions, then it returns true if distance is not greater than MAX_DISTANCE.
-         * <p/>
+         * </p><p>
          * On the other hand, if the shortStrong ends with one of these chars 'e, a, p, ç, t, k' and 't 's a rootWord with
          * the conditions of rootSoftenDuringSuffixation, vowelEChangesToIDuringYSuffixation, vowelAChangesToIDuringYSuffixation
          * or endingKChangesIntoG then it returns true if the last index is not equal to 2 and distance is not greater than
-         * MAX_DISTANCE and false otherwise.</summary>
+         * MAX_DISTANCE and false otherwise.
+         * </p></summary>
          *
-         * <param name="shortstring">the possible substring.</param>
-         * <param name="longstring"> the long string to compare with substring.</param>
+         * <param name="shortString">the possible substring.</param>
+         * <param name="longString"> the long string to compare with substring.</param>
          * <param name="root">       the root of the long string.</param>
          * <returns>true if given substring is the actual substring of the longstring, false otherwise.</returns>
          */
@@ -332,77 +348,77 @@ namespace MorphologicalAnalysis
 
         /**
          * <summary>The initializeParseList method initializes the given given fsm ArrayList with given root words by parsing them.
-         * <p/>
+         * <p>
          * It checks many conditions;
          * isPlural; if root holds the condition then it gets the state with the name of NominalRootPlural, then
          * creates a new parsing and adds this to the input fsmParse Arraylist.
          * Ex : Açıktohumlular
-         * <p/>
+         * </p><p>
          * !isPlural and isPortmanteauEndingWithSI, if root holds the conditions then it gets the state with the
          * name of NominalRootNoPossesive.
          * Ex : Balarısı
-         * <p/>
+         * </p><p>
          * !isPlural and isPortmanteau, if root holds the conditions then it gets the state with the name of
          * CompoundNounRoot.
          * Ex : Aslanağızı
-         * <p/>
+         * </p><p>
          * !isPlural, !isPortmanteau and isHeader, if root holds the conditions then it gets the state with the
          * name of HeaderRoot.
-         * Ex :  </title>
-         * <p/>
+         * Ex : 
+         * </p><p>
          * !isPlural, !isPortmanteau and isInterjection, if root holds the conditions then it gets the state
          * with the name of InterjectionRoot.
          * Ex : Hey, Aa
-         * <p/>
+         * </p><p>
          * !isPlural, !isPortmanteau and isDuplicate, if root holds the conditions then it gets the state
          * with the name of DuplicateRoot.
          * Ex : Allak,
-         * <p/>
+         * </p><p>
          * !isPlural, !isPortmanteau and isCode, if root holds the conditions then it gets the state
          * with the name of CodeRoot.
          * Ex : 9400f,
-         * <p/>
+         * </p><p>
          * !isPlural, !isPortmanteau and isMetric, if root holds the conditions then it gets the state
          * with the name of MetricRoot.
          * Ex : 11x8x12,
-         * <p/>
+         * </p><p>
          * !isPlural, !isPortmanteau and isNumeral, if root holds the conditions then it gets the state
          * with the name of CardinalRoot.
          * Ex : Yüz, bin
-         * <p/>
+         * </p><p>
          * !isPlural, !isPortmanteau and isReal, if root holds the conditions then it gets the state
          * with the name of RealRoot.
          * Ex : 1.2
-         * <p/>
+         * </p><p>
          * !isPlural, !isPortmanteau and isFraction, if root holds the conditions then it gets the state
          * with the name of FractionRoot.
          * Ex : 1/2
-         * <p/>
+         * </p><p>
          * !isPlural, !isPortmanteau and isDate, if root holds the conditions then it gets the state
          * with the name of DateRoot.
          * Ex : 11/06/2018
-         * <p/>
+         * </p><p>
          * !isPlural, !isPortmanteau and isPercent, if root holds the conditions then it gets the state
          * with the name of PercentRoot.
          * Ex : %12.5
-         * <p/>
+         * </p><p>
          * !isPlural, !isPortmanteau and isRange, if root holds the conditions then it gets the state
          * with the name of RangeRoot.
          * Ex : 3-5
-         * <p/>
+         * </p><p>
          * !isPlural, !isPortmanteau and isTime, if root holds the conditions then it gets the state
          * with the name of TimeRoot.
          * Ex : 13:16:08
-         * <p/>
+         * </p><p>
          * !isPlural, !isPortmanteau and isOrdinal, if root holds the conditions then it gets the state
          * with the name of OrdinalRoot.
          * Ex : Altıncı
-         * <p/>
+         * </p><p>
          * !isPlural, !isPortmanteau, and isVerb if root holds the conditions then it gets the state
          * with the name of VerbalRoot. Or isPassive, then it gets the state with the name of PassiveHn.
          * Ex : Anla (!isPAssive)
          * Ex : Çağrıl (isPassive)
-         * <p/>
+         * </p><p>
          * !isPlural, !isPortmanteau and isPronoun, if root holds the conditions then it gets the state
          * with the name of PronounRoot. There are 6 different Pronoun state names, REFLEX, QUANT, QUANTPLURAL, DEMONS, PERS, QUES.
          * REFLEX = Reflexive Pronouns Ex : kendi
@@ -411,42 +427,43 @@ namespace MorphologicalAnalysis
          * DEMONS = Demonstrative Pronouns Ex : o, bu, şu
          * PERS = Personal Pronouns Ex : ben, sen, o, biz, siz, onlar
          * QUES = Interrogatıve Pronouns Ex : nere, ne, kim, hangi
-         * <p/>
+         * </p><p>
          * !isPlural, !isPortmanteau and isAdjective, if root holds the conditions then it gets the state
          * with the name of AdjectiveRoot.
          * Ex : Absürt, Abes
-         * <p/>
+         * </p><p>
          * !isPlural, !isPortmanteau and isPureAdjective, if root holds the conditions then it gets the state
          * with the name of Adjective.
          * Ex : Geçmiş, Cam
-         * <p/>
+         * </p><p>
          * !isPlural, !isPortmanteau and isNominal, if root holds the conditions then it gets the state
          * with the name of NominalRoot.
          * Ex : Görüş
-         * <p/>
+         * </p><p>
          * !isPlural, !isPortmanteau and isProper, if root holds the conditions then it gets the state
          * with the name of ProperRoot.
          * Ex : Abdi
-         * <p/>
+         * </p><p>
          * !isPlural, !isPortmanteau and isQuestion, if root holds the conditions then it gets the state
          * with the name of QuestionRoot.
          * Ex : Mi, mü
-         * <p/>
+         * </p><p>
          * !isPlural, !isPortmanteau and isDeterminer, if root holds the conditions then it gets the state
          * with the name of DeterminerRoot.
          * Ex : Çok, bir
-         * <p/>
+         * </p><p>
          * !isPlural, !isPortmanteau and isConjunction, if root holds the conditions then it gets the state
          * with the name of ConjunctionRoot.
          * Ex : Ama , ancak
-         * <p/>
+         * </p><p>
          * !isPlural, !isPortmanteau and isPostP, if root holds the conditions then it gets the state
          * with the name of PostP.
          * Ex : Ait, dair
-         * <p/>
+         * </p><p>
          * !isPlural, !isPortmanteau and isAdverb, if root holds the conditions then it gets the state
          * with the name of AdverbRoot.
-         * Ex : Acilen</summary>
+         * Ex : Acilen
+         * </p></summary>
          *
          * <param name="fsmParse">ArrayList to initialize.</param>
          * <param name="root">    word to check properties and add to fsmParse according to them.</param>
@@ -761,7 +778,7 @@ namespace MorphologicalAnalysis
         /**
          * <summary>The initializeParseListFromRoot method is used to create an {@link ArrayList} which consists of initial fsm parsings. First, traverses
          * this HashSet and uses each word as a root and calls initializeParseList method with this root and ArrayList.
-         * <p/></summary>
+         * </summary>
          *
          * <param name="parseList">ArrayList to initialize.</param>
          * <param name="root">the root form to generate initial parse list.</param>
@@ -814,7 +831,7 @@ namespace MorphologicalAnalysis
          * <summary>The initializeParseListFromSurfaceForm method is used to create an {@link ArrayList} which consists of initial fsm parsings. First,
          * it calls.GetWordsWithPrefix methods by using input string surfaceForm and generates a {@link HashSet}. Then, traverses
          * this HashSet and uses each word as a root and calls initializeParseListFromRoot method with this root and ArrayList.
-         * <p/></summary>
+         * </summary>
          *
          * <param name="surfaceForm">the string used to generate a HashSet of words.</param>
          * <param name="isProper">   is used to check a word is proper or not.</param>
@@ -1350,6 +1367,15 @@ namespace MorphologicalAnalysis
             return ParseWord(initialFsmParse, surfaceForm);
         }
 
+        /// <summary>
+        /// This method uses cache idea to speed up pattern matching in Fsm. mostUsedPatterns stores the compiled forms of
+        /// the previously used patterns. When Fsm tries to match a string to a pattern, first we check if it exists in
+        /// mostUsedPatterns. If it exists, we directly use the compiled pattern to match the string. Otherwise, new pattern
+        /// is compiled and put in the mostUsedPatterns.
+        /// </summary>
+        /// <param name="expr">Pattern to check</param>
+        /// <param name="value">String to match the pattern</param>
+        /// <returns>True if the string matches the pattern, false otherwise.</returns>
         private bool PatternMatches(string expr, string value)
         {
             Regex p;
@@ -1399,6 +1425,19 @@ namespace MorphologicalAnalysis
             return PatternMatches(".*[0-9].*", surfaceForm) && PatternMatches(".*[a-zA-ZçöğüşıÇÖĞÜŞİ].*", surfaceForm);
         }
         
+        /// <summary>
+        /// Identifies a possible new root word for a given surface form. It also adds the new root form to the dictionary
+        /// for further usage. The method first searches the suffix trie for the reverse string of the surface form. This
+        /// way, it can identify if the word has a suffix that is in the most frequently used suffix list. Since a word can
+        /// have multiple possible suffixes, the method identifies the longest suffix and returns the substring of the
+        /// surface form tht does not contain the suffix. Let say the word is 'googlelaştırdık', it will identify 'tık' as
+        /// a suffix and will return 'googlelaştır' as a possible root form. Another example will be 'homelesslerimizle', it
+        /// will identify 'lerimizle' as suffix and will return 'homeless' as a possible root form. If the root word ends
+        /// with 'ğ', it is replacesd with 'k'. 'morfolojikliğini' will return 'morfolojikliğ' then which will be replaced
+        /// with 'morfolojiklik'.
+        /// </summary>
+        /// <param name="surfaceForm">Surface form for which we will identify a possible new root form.</param>
+        /// <returns>Possible new root form.</returns>
         private TxtWord RootOfPossiblyNewWord(string surfaceForm){
             var words = _suffixTrie.GetWordsWithPrefix(ReverseString(surfaceForm));
             var maxLength = 0;
@@ -1602,17 +1641,33 @@ namespace MorphologicalAnalysis
             return word == "" && count > 1;
         }
 
+        /// <summary>
+        /// Checks if a given surface form matches to a percent value. It should be something like %4, %45, %4.3 or %56.786
+        /// </summary>
+        /// <param name="surfaceForm">Surface form to be checked.</param>
+        /// <returns>True if the surface form is in percent form</returns>
         private bool IsPercent(string surfaceForm)
         {
             return PatternMatches("%(\\d\\d|\\d)", surfaceForm) || PatternMatches("%(\\d\\d|\\d)\\.\\d+", surfaceForm);
         }
 
+        /// <summary>
+        /// Checks if a given surface form matches to a time form. It should be something like 3:34, 12:56 etc.
+        /// </summary>
+        /// <param name="surfaceForm">Surface form to be checked.</param>
+        /// <returns>True if the surface form is in time form</returns>
         private bool IsTime(string surfaceForm)
         {
             return PatternMatches("(\\d\\d|\\d):(\\d\\d|\\d):(\\d\\d|\\d)", surfaceForm) ||
                    PatternMatches("(\\d\\d|\\d):(\\d\\d|\\d)", surfaceForm);
         }
 
+        /// <summary>
+        /// Checks if a given surface form matches to a range form. It should be something like 123-1400 or 12:34-15:78 or
+        /// 3.45-4.67.
+        /// </summary>
+        /// <param name="surfaceForm">Surface form to be checked.</param>
+        /// <returns>True if the surface form is in range form</returns>
         private bool IsRange(string surfaceForm)
         {
             return PatternMatches("\\d+-\\d+", surfaceForm) ||
@@ -1620,6 +1675,11 @@ namespace MorphologicalAnalysis
                    PatternMatches("(\\d\\d|\\d)\\.(\\d\\d|\\d)-(\\d\\d|\\d)\\.(\\d\\d|\\d)", surfaceForm);
         }
 
+        /// <summary>
+        /// Checks if a given surface form matches to a date form. It should be something like 3/10/2023 or 2.3.2012
+        /// </summary>
+        /// <param name="surfaceForm">Surface form to be checked.</param>
+        /// <returns>True if the surface form is in date form</returns>
         private bool IsDate(string surfaceForm)
         {
             return PatternMatches("(\\d\\d|\\d)/(\\d\\d|\\d)/\\d+", surfaceForm) ||

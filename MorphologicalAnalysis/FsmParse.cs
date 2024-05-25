@@ -397,13 +397,13 @@ namespace MorphologicalAnalysis
 
         /**
          * <summary>The headerTransition method gets the first item of formList and checks for cases;
-         * <p/>
+         * <p>
          * If it is &lt;DOC&gt;, it returns &lt;DOC&gt;+BDTAG which indicates the beginning of a document.
          * If it is &lt;/DOC&gt;, it returns &lt;/DOC&gt;+EDTAG which indicates the ending of a document.
          * If it is &lt;TITLE&gt;, it returns &lt;TITLE&gt;+BTTAG which indicates the beginning of a title.
          * If it is &lt;/TITLE&gt;, it returns &lt;/TITLE&gt;+ETTAG which indicates the ending of a title.
          * If it is &lt;S&gt;, it returns &lt;S&gt;+BSTAG which indicates the beginning of a sentence.
-         * If it is &lt;/S&gt;, it returns &lt;/S&gt;+ESTAG which indicates the ending of a sentence.</summary>
+         * If it is &lt;/S&gt;, it returns &lt;/S&gt;+ESTAG which indicates the ending of a sentence.</p></summary>
          *
          * <returns>corresponding tags of the headers and an empty {@link string} if any case does not match.</returns>
          */
@@ -430,7 +430,7 @@ namespace MorphologicalAnalysis
 
         /**
          * <summary>The pronounTransition method gets the first item of formList and checks for cases;
-         * <p/>
+         * <p>
          * If it is "kendi", it returns kendi+PRON+REFLEXP which indicates a reflexive pronoun.
          * If it is one of the "hep, öbür, topu, öteki, kimse, hiçbiri, tümü, çoğu, hepsi, herkes, başkası, birçoğu, birçokları, biri, birbirleri, birbiri, birkaçı, böylesi, diğeri, cümlesi, bazı, kimi", it returns
          * +PRON+QUANTP which indicates a quantitative pronoun.
@@ -444,7 +444,7 @@ namespace MorphologicalAnalysis
          * If it is "siz", it returns +PRON+PERS+A2PL+PNON which indicates a 2nd person plural agreement.
          * If it is "onlar" and the first item of suffixList, if it is a PronounRoot(PERS), it returns o+PRON+PERS+A3PL+PNON which
          * indicates a 3rd person plural agreement.
-         * If it is one of the "nere, ne, kim, hangi", it returns +PRON+QUESP which indicates a question pronoun.</summary>
+         * If it is one of the "nere, ne, kim, hangi", it returns +PRON+QUESP which indicates a question pronoun.</p></summary>
          *
          * <returns>corresponding transitions of pronouns and an empty {@link string} if any case does not match.</returns>
          */
@@ -517,107 +517,107 @@ namespace MorphologicalAnalysis
 
         /**
          * <summary>The transitionList method first creates an empty {@link string} result, then gets the first item of suffixList and checks for cases;
-         * <p/>
+         * <p>
          * If it is one of the "NominalRoot, NominalRootNoPossessive, CompoundNounRoot, NominalRootPlural", it assigns concatenation of first
          * item of formList and +NOUN to the result string.
          * Ex : Birincilik
-         * <p/>
+         * </p><p>
          * If it is one of the "VerbalRoot, PassiveHn", it assigns concatenation of first item of formList and +VERB to the result string.
          * Ex : Başkalaştı
-         * <p/>
+         * </p><p>
          * If it is "CardinalRoot", it assigns concatenation of first item of formList and +NUM+CARD to the result string.
          * Ex : Onuncu
-         * <p/>
+         * </p><p>
          * If it is "FractionRoot", it assigns concatenation of first item of formList and NUM+FRACTION to the result string.
          * Ex : 1/2
-         * <p/>
+         * </p><p>
          * If it is "TimeRoot", it assigns concatenation of first item of formList and +TIME to the result string.
          * Ex : 14:28
-         * <p/>
+         * </p><p>
          * If it is "RealRoot", it assigns concatenation of first item of formList and +NUM+REAL to the result string.
          * Ex : 1.2
-         * <p/>
+         * </p><p>
          * If it is "Punctuation", it assigns concatenation of first item of formList and +PUNC to the result string.
          * Ex : ,
-         * <p/>
+         * </p><p>
          * If it is "Hashtag", it assigns concatenation of first item of formList and +HASHTAG to the result string.
          * Ex : #
-         * <p/>
+         * </p><p>
          * If it is "DateRoot", it assigns concatenation of first item of formList and +DATE to the result string.
          * Ex : 11/06/2018
-         * <p/>
+         * </p><p>
          * If it is "RangeRoot", it assigns concatenation of first item of formList and +RANGE to the result string.
          * Ex : 3-5
-         * <p/>
+         * </p><p>
          * If it is "Email", it assigns concatenation of first item of formList and +EMAIL to the result string.
          * Ex : abc@
-         * <p/>
+         * </p><p>
          * If it is "PercentRoot", it assigns concatenation of first item of formList and +PERCENT to the result string.
          * Ex : %12.5
-         * <p/>
+         * </p><p>
          * If it is "DeterminerRoot", it assigns concatenation of first item of formList and +DET to the result string.
          * Ex : Birtakım
-         * <p/>
+         * </p><p>
          * If it is "ConjunctionRoot", it assigns concatenation of first item of formList and +CONJ to the result string.
          * Ex : Ama
-         * <p/>
+         * </p><p>
          * If it is "AdverbRoot", it assigns concatenation of first item of formList and +ADV to the result string.
          * Ex : Acilen
-         * <p/>
+         * </p><p>
          * If it is "ProperRoot", it assigns concatenation of first item of formList and +NOUN+PROP to the result string.
          * Ex : Ahmet
-         * <p/>
+         * </p><p>
          * If it is "HeaderRoot", it assigns the result of the headerTransition method to the result string.
          * Ex : &lt;DOC&gt;
-         * <p/>
+         * </p><p>
          * If it is "InterjectionRoot", it assigns concatenation of first item of formList and +INTERJ to the result string.
          * Ex : Hey
-         * <p/>
+         * </p><p>
          * If it is "DuplicateRoot", it assigns concatenation of first item of formList and +DUP to the result string.
          * Ex : Allak
-         * <p/>
+         * </p><p>
          * If it is "CodeRoot", it assigns concatenation of first item of formList and +CODE to the result String.
          * Ex : 5000-WX
-         * <p/>
+         * </p><p>
          * If it is "MetricRoot", it assigns concatenation of first item of formList and +METRIC to the result String.
          * Ex : 6cmx12cm
-         * <p/>
+         * </p><p>
          * If it is "QuestionRoot", it assigns concatenation of first item of formList and +QUES to the result string.
          * Ex : Mı
-         * <p/>
+         * </p><p>
          * If it is "PostP", and the first item of formList is one of the "karşı, ilişkin, göre, kadar, ait, yönelik, rağmen, değin,
          * dek, doğru, karşın, dair, atfen, binaen, hitaben, istinaden, mahsuben, mukabil, nazaran", it assigns concatenation of first
          * item of formList and +POSTP+PCDAT to the result string.
          * Ex : İlişkin
-         * <p/>
+         * </p><p>
          * If it is "PostP", and the first item of formList is one of the "sonra, önce, beri, fazla, dolayı, itibaren, başka,
          * çok, evvel, ötürü, yana, öte, aşağı, yukarı, dışarı, az, gayrı", it assigns concatenation of first
          * item of formList and +POSTP+PCABL to the result string.
          * Ex : Başka
-         * <p/>
+         * </p><p>
          * If it is "PostP", and the first item of formList is "yanısıra", it assigns concatenation of first
          * item of formList and +POSTP+PCGEN to the result string.
          * Ex : Yanısıra
-         * <p/>
+         * </p><p>
          * If it is "PostP", and the first item of formList is one of the "birlikte, beraber", it assigns concatenation of first
          * item of formList and +PPOSTP+PCINS to the result string.
          * Ex : Birlikte
-         * <p/>
+         * </p><p>
          * If it is "PostP", and the first item of formList is one of the "aşkın, takiben", it assigns concatenation of first
          * item of formList and +POSTP+PCACC to the result string.
          * Ex : Takiben
-         * <p/>
+         * </p><p>
          * If it is "PostP", it assigns concatenation of first item of formList and +POSTP+PCNOM to the result string.
-         * <p/>
+         * </p><p>
          * If it is "PronounRoot", it assigns result of the pronounTransition method to the result string.
          * Ex : Ben
-         * <p/>
+         * </p><p>
          * If it is "OrdinalRoot", it assigns concatenation of first item of formList and +NUM+ORD to the result string.
          * Ex : Altıncı
-         * <p/>
+         * </p><p>
          * If it starts with "Adjective", it assigns concatenation of first item of formList and +ADJ to the result string.
          * Ex : Güzel
-         * <p/>
+         * </p>
          * At the end, it loops through the formList and concatenates each item with result {@link string}.</summary>
          *
          * <returns>string result accumulated with items of formList.</returns>
