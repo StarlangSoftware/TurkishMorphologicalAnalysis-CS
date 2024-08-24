@@ -407,10 +407,10 @@ namespace MorphologicalAnalysis
                 {
                     //---showsSuRegularities---
                     //karasu->karasuyu, özsu->özsuyu, ağırsu->ağırsuyu, akarsu->akarsuyu, bengisu->bengisuyu
-                    if (rootWord && root.ShowsSuRegularities() && StartWithVowelOrConsonantDrops() &&
-                        !_with.StartsWith("y"))
+                    if (rootWord && root.ShowsSuRegularities() && StartWithVowelOrConsonantDrops())
                     {
                         formation = stem + 'y';
+                        i = 1;
                         formationToCheck = formation;
                     }
                     else

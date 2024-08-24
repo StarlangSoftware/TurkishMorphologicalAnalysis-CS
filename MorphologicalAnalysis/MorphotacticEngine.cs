@@ -275,6 +275,9 @@ namespace MorphologicalAnalysis
                 //2'yi, 5'i, 8'i
                 return formation + 'i';
             }
+            if (Word.LastVowel(formationToCheck) == '0'){
+                return formation + 'i';
+            }
 
             return formation;
         }

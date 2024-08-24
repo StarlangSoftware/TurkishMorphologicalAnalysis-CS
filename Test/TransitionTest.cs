@@ -163,6 +163,13 @@ namespace Test
         {
             Assert.True(fsm.MorphologicalAnalysis("karasuyu").Size() != 0);
             Assert.True(fsm.MorphologicalAnalysis("suyu").Size() != 0);
+            Assert.True(fsm.MorphologicalAnalysis("suydu").Size() != 0);
+            Assert.True(fsm.MorphologicalAnalysis("suymuş").Size() != 0);
+            Assert.True(fsm.MorphologicalAnalysis("suyuymuş").Size() != 0);
+            Assert.True(fsm.MorphologicalAnalysis("suyla").Size() != 0);
+            Assert.True(fsm.MorphologicalAnalysis("suyuyla").Size() != 0);
+            Assert.True(fsm.MorphologicalAnalysis("suyuydu").Size() != 0);
+            Assert.True(fsm.MorphologicalAnalysis("suyuna").Size() != 0);
         }
 
         [Test]
