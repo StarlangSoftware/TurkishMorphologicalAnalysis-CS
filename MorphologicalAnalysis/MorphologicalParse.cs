@@ -28,7 +28,7 @@ namespace MorphologicalAnalysis
 
         /**
          * <summary>Another constructor of {@link MorphologicalParse} class which takes a {@link String} parse as an input. First it creates
-         * an {@link ArrayList} as iGs for inflectional groups, and while given String contains derivational boundary (^DB+), it
+         * an {@link ArrayList} as iGs for inflectional groups, and while given String Contains derivational boundary (^DB+), it
          * adds the substring to the iGs {@link ArrayList} and continue to use given String from 4th index. If it does not contain ^DB+,
          * it directly adds the given String to the iGs {@link ArrayList}. Then, it creates a new {@link ArrayList} as
          * inflectionalGroups and checks for some cases.
@@ -127,7 +127,7 @@ namespace MorphologicalAnalysis
          * <summary>The getTransitionList method gets the first item of inflectionalGroups {@link ArrayList} as a {@link String}, then loops
          * through the items of inflectionalGroups and concatenates them by using +.</summary>
          *
-         * <returns>String that contains transition list.</returns>
+         * <returns>String that Contains transition list.</returns>
          */
         public string GetTransitionList()
         {
@@ -316,10 +316,10 @@ namespace MorphologicalAnalysis
         }
 
         /**
-         * <summary>lastIGContainsPossessive method returns true if the last inflectional group contains one of the
+         * <summary>lastIGContainsPossessive method returns true if the last inflectional group Contains one of the
          * possessives: P1PL, P1SG, P2PL, P2SG, P3PL AND P3SG, false otherwise.</summary>
          *
-         * <returns>true if the last inflectional group contains one of the possessives: P1PL, P1SG, P2PL, P2SG, P3PL AND P3SG, false otherwise.</returns>
+         * <returns>true if the last inflectional group Contains one of the possessives: P1PL, P1SG, P2PL, P2SG, P3PL AND P3SG, false otherwise.</returns>
          */
         public bool LastIGContainsPossessive()
         {
@@ -668,7 +668,12 @@ namespace MorphologicalAnalysis
         private string GetPronType()
         {
             var lemma = root.GetName();
-            if (ContainsTag(MorphologicalTag.PERSONALPRONOUN))
+            if (ContainsTag(MorphologicalTag.DETERMINER))
+            {
+                return "Art";
+            }
+
+            if (lemma.Equals("kendi") || ContainsTag(MorphologicalTag.PERSONALPRONOUN))
             {
                 return "Prs";
             }
@@ -676,6 +681,21 @@ namespace MorphologicalAnalysis
             if (lemma.Equals("birbiri") || lemma.Equals("birbirleri"))
             {
                 return "Rcp";
+            }
+
+            if (lemma.Equals("birçoğu") || lemma.Equals("hep") || lemma.Equals("kimse")
+                || lemma.Equals("bazı") || lemma.Equals("biri") || lemma.Equals("çoğu")
+                || lemma.Equals("hepsi") || lemma.Equals("diğeri") || lemma.Equals("tümü")
+                || lemma.Equals("herkes") || lemma.Equals("kimi") || lemma.Equals("öbür")
+                || lemma.Equals("öteki") || lemma.Equals("birkaçı") || lemma.Equals("topu")
+                || lemma.Equals("başkası"))
+            {
+                return "Ind";
+            }
+
+            if (lemma.Equals("hiçbiri"))
+            {
+                return "Neg";
             }
 
             if (lemma.Equals("kim") || lemma.Equals("nere") || lemma.Equals("ne")
@@ -701,14 +721,19 @@ namespace MorphologicalAnalysis
         private string GetNumType()
         {
             var lemma = root.GetName();
-            if (ContainsTag(MorphologicalTag.CARDINAL) || ContainsTag(MorphologicalTag.NUMBER) || lemma.Equals("kaç"))
+            if (lemma.Equals("%") || ContainsTag(MorphologicalTag.TIME))
             {
-                return "Card";
+                return "Ord";
             }
 
             if (ContainsTag(MorphologicalTag.ORDINAL) || lemma.Equals("kaçıncı"))
             {
                 return "Ord";
+            }
+
+            if (ContainsTag(MorphologicalTag.CARDINAL) || ContainsTag(MorphologicalTag.NUMBER) || lemma.Equals("kaç"))
+            {
+                return "Card";
             }
 
             if (ContainsTag(MorphologicalTag.DISTRIBUTIVE))
@@ -718,7 +743,7 @@ namespace MorphologicalAnalysis
 
             return null;
         }
-        
+
         /// <summary>
         /// Returns the value for the dependency feature Reflex.
         /// </summary>
@@ -737,8 +762,8 @@ namespace MorphologicalAnalysis
         /// <summary>
         /// Returns the agreement of the parse for the universal dependency feature Number.
         /// </summary>
-        /// <returns>"Sing" if the agreement of the parse is singular (contains A1SG, A2SG, A3SG); "Plur" if the agreement
-        /// of the parse is plural (contains A1PL, A2PL, A3PL).</returns>
+        /// <returns>"Sing" if the agreement of the parse is singular (Contains A1SG, A2SG, A3SG); "Plur" if the agreement
+        /// of the parse is plural (Contains A1PL, A2PL, A3PL).</returns>
         private string GetNumber()
         {
             if (ContainsTag(MorphologicalTag.A1SG) || ContainsTag(MorphologicalTag.A2SG) ||
@@ -752,6 +777,28 @@ namespace MorphologicalAnalysis
             if (ContainsTag(MorphologicalTag.A1PL) || ContainsTag(MorphologicalTag.A2PL) ||
                 ContainsTag(MorphologicalTag.A3PL)
                 || ContainsTag(MorphologicalTag.P1PL) || ContainsTag(MorphologicalTag.P2PL) ||
+                ContainsTag(MorphologicalTag.P3PL))
+            {
+                return "Plur";
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Returns the possessive agreement of the parse for the universal dependency feature [Pos].
+        /// </summary>
+        /// <returns>"Sing" if the possessive agreement of the parse is singular (Contains P1SG, P2SG, P3SG); "Plur" if the
+        /// possessive agreement of the parse is plural (Contains P1PL, P2PL, P3PL).</returns>
+        private string GetPossessiveNumber()
+        {
+            if (ContainsTag(MorphologicalTag.P1SG) || ContainsTag(MorphologicalTag.P2SG) ||
+                ContainsTag(MorphologicalTag.P3SG))
+            {
+                return "Sing";
+            }
+
+            if (ContainsTag(MorphologicalTag.P1PL) || ContainsTag(MorphologicalTag.P2PL) ||
                 ContainsTag(MorphologicalTag.P3PL))
             {
                 return "Plur";
@@ -797,6 +844,11 @@ namespace MorphologicalAnalysis
                 return "Abl";
             }
 
+            if (ContainsTag(MorphologicalTag.EQUATIVE))
+            {
+                return "Equ";
+            }
+
             if (ContainsTag(MorphologicalTag.NOMINATIVE) || ContainsTag(MorphologicalTag.PCNOMINATIVE))
             {
                 return "Nom";
@@ -815,7 +867,8 @@ namespace MorphologicalAnalysis
             var lemma = root.GetName();
             if (ContainsTag(MorphologicalTag.DETERMINER))
             {
-                if (lemma.Equals("bir") || lemma.Equals("bazı") || lemma.Equals("birkaç"))
+                if (lemma.Equals("bir") || lemma.Equals("bazı") || lemma.Equals("birkaç") || lemma.Equals("birçok") ||
+                    lemma.Equals("kimi"))
                 {
                     return "Ind";
                 }
@@ -856,6 +909,11 @@ namespace MorphologicalAnalysis
         /// <returns>"Pos" for positive polarity containing tag POS; "Neg" for negative polarity containing tag NEG.</returns>
         private string GetPolarity()
         {
+            if (root.GetName().Equals("değil"))
+            {
+                return "Neg";
+            }
+
             if (ContainsTag(MorphologicalTag.POSITIVE))
             {
                 return "Pos";
@@ -900,6 +958,30 @@ namespace MorphologicalAnalysis
         }
 
         /// <summary>
+        /// Returns the person of the possessive agreement of the parse for the universal dependency feature [pos].
+        /// </summary>
+        /// <returns>"1" for first person; "2" for second person; "3" for third person.</returns>
+        private string GetPossessivePerson()
+        {
+            if (ContainsTag(MorphologicalTag.P1SG) || ContainsTag(MorphologicalTag.P1PL))
+            {
+                return "1";
+            }
+
+            if (ContainsTag(MorphologicalTag.P2SG) || ContainsTag(MorphologicalTag.P2PL))
+            {
+                return "2";
+            }
+
+            if (ContainsTag(MorphologicalTag.P3SG) || ContainsTag(MorphologicalTag.P3PL))
+            {
+                return "3";
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Returns the voice of the verb parse for the universal dependency feature voice.
         /// </summary>
         /// <returns>"CauPass" if the verb parse is both causative and passive; "Pass" if the verb parse is only passive;
@@ -907,6 +989,11 @@ namespace MorphologicalAnalysis
         /// reflexive.</returns>
         private string GetVoice()
         {
+            if (ContainsTag(MorphologicalTag.CAUSATIVE) && ContainsTag(MorphologicalTag.PASSIVE))
+            {
+                return "CauPass";
+            }
+
             if (ContainsTag(MorphologicalTag.PASSIVE))
             {
                 return "Pass";
@@ -974,7 +1061,12 @@ namespace MorphologicalAnalysis
         /// past tenses.</returns>
         private string GetTense()
         {
-            if (ContainsTag(MorphologicalTag.PASTTENSE))
+            if (ContainsTag(MorphologicalTag.NARRATIVE) && ContainsTag(MorphologicalTag.PASTTENSE))
+            {
+                return "Pqp";
+            }
+
+            if (ContainsTag(MorphologicalTag.NARRATIVE) || ContainsTag(MorphologicalTag.PASTTENSE))
             {
                 return "Past";
             }
@@ -982,11 +1074,6 @@ namespace MorphologicalAnalysis
             if (ContainsTag(MorphologicalTag.FUTURE))
             {
                 return "Fut";
-            }
-
-            if (ContainsTag(MorphologicalTag.NARRATIVE) && ContainsTag(MorphologicalTag.PASTTENSE))
-            {
-                return "Pqp";
             }
 
             if (!ContainsTag(MorphologicalTag.PASTTENSE) && !ContainsTag(MorphologicalTag.FUTURE))
@@ -1012,6 +1099,51 @@ namespace MorphologicalAnalysis
         /// simple necessitative; "Pot" for simple potential; "Gen" for simple suffix of a general modality.</returns>
         private string GetMood()
         {
+            if ((ContainsTag(MorphologicalTag.COPULA) || ContainsTag(MorphologicalTag.AORIST)) &&
+                ContainsTag(MorphologicalTag.NECESSITY) && ContainsTag(MorphologicalTag.ABLE))
+            {
+                return "GenNecPot";
+            }
+
+            if ((ContainsTag(MorphologicalTag.COPULA) || ContainsTag(MorphologicalTag.AORIST)) &&
+                ContainsTag(MorphologicalTag.CONDITIONAL) && ContainsTag(MorphologicalTag.ABLE))
+            {
+                return "CndGenPot";
+            }
+
+            if ((ContainsTag(MorphologicalTag.COPULA) || ContainsTag(MorphologicalTag.AORIST)) &&
+                ContainsTag(MorphologicalTag.NECESSITY))
+            {
+                return "GenNec";
+            }
+
+            if ((ContainsTag(MorphologicalTag.COPULA) || ContainsTag(MorphologicalTag.AORIST)) &&
+                ContainsTag(MorphologicalTag.ABLE))
+            {
+                return "GenPot";
+            }
+
+            if (ContainsTag(MorphologicalTag.NECESSITY) && ContainsTag(MorphologicalTag.ABLE))
+            {
+                return "NecPot";
+            }
+
+            if (ContainsTag(MorphologicalTag.DESIRE) && ContainsTag(MorphologicalTag.ABLE))
+            {
+                return "DesPot";
+            }
+
+            if (ContainsTag(MorphologicalTag.CONDITIONAL) && ContainsTag(MorphologicalTag.ABLE))
+            {
+                return "CndPot";
+            }
+
+            if (ContainsTag(MorphologicalTag.CONDITIONAL) &&
+                (ContainsTag(MorphologicalTag.COPULA) || ContainsTag(MorphologicalTag.AORIST)))
+            {
+                return "CndGen";
+            }
+
             if (ContainsTag(MorphologicalTag.IMPERATIVE))
             {
                 return "Imp";
@@ -1037,10 +1169,25 @@ namespace MorphologicalAnalysis
                 return "Nec";
             }
 
+            if (ContainsTag(MorphologicalTag.ABLE))
+            {
+                return "Pot";
+            }
+
             if (ContainsTag(MorphologicalTag.PASTTENSE) || ContainsTag(MorphologicalTag.PROGRESSIVE1) ||
                 ContainsTag(MorphologicalTag.FUTURE))
             {
                 return "Ind";
+            }
+
+            if ((ContainsTag(MorphologicalTag.COPULA) || ContainsTag(MorphologicalTag.AORIST)))
+            {
+                return "Gen";
+            }
+
+            if (ContainsTag(MorphologicalTag.ZERO) && !ContainsTag(MorphologicalTag.A3PL))
+            {
+                return "Gen";
             }
 
             return null;
@@ -1059,11 +1206,51 @@ namespace MorphologicalAnalysis
                 return "Part";
             }
 
+            if (ContainsTag(MorphologicalTag.INFINITIVE) || ContainsTag(MorphologicalTag.INFINITIVE2))
+            {
+                return "Vnoun";
+            }
+
             if (ContainsTag(MorphologicalTag.SINCEDOINGSO) || ContainsTag(MorphologicalTag.WITHOUTHAVINGDONESO) ||
                 ContainsTag(MorphologicalTag.WITHOUTBEINGABLETOHAVEDONESO) || ContainsTag(MorphologicalTag.BYDOINGSO) ||
                 ContainsTag(MorphologicalTag.AFTERDOINGSO) || ContainsTag(MorphologicalTag.INFINITIVE3))
             {
                 return "Conv";
+            }
+
+            if (ContainsTag(MorphologicalTag.COPULA) || ContainsTag(MorphologicalTag.ABLE) ||
+                ContainsTag(MorphologicalTag.AORIST) || ContainsTag(MorphologicalTag.PROGRESSIVE2)
+                || ContainsTag(MorphologicalTag.DESIRE) || ContainsTag(MorphologicalTag.NECESSITY) ||
+                ContainsTag(MorphologicalTag.CONDITIONAL) || ContainsTag(MorphologicalTag.IMPERATIVE) ||
+                ContainsTag(MorphologicalTag.OPTATIVE)
+                || ContainsTag(MorphologicalTag.PASTTENSE) || ContainsTag(MorphologicalTag.NARRATIVE) ||
+                ContainsTag(MorphologicalTag.PROGRESSIVE1) || ContainsTag(MorphologicalTag.FUTURE)
+                || (ContainsTag(MorphologicalTag.ZERO) && !ContainsTag(MorphologicalTag.A3PL)))
+            {
+                return "Fin";
+            }
+
+            return null;
+        }
+
+        private string GetEvident()
+        {
+            if (ContainsTag(MorphologicalTag.NARRATIVE))
+            {
+                return "Nfh";
+            }
+            else
+            {
+                if (ContainsTag(MorphologicalTag.COPULA) || ContainsTag(MorphologicalTag.ABLE) ||
+                    ContainsTag(MorphologicalTag.AORIST) || ContainsTag(MorphologicalTag.PROGRESSIVE2)
+                    || ContainsTag(MorphologicalTag.DESIRE) || ContainsTag(MorphologicalTag.NECESSITY) ||
+                    ContainsTag(MorphologicalTag.CONDITIONAL) || ContainsTag(MorphologicalTag.IMPERATIVE) ||
+                    ContainsTag(MorphologicalTag.OPTATIVE)
+                    || ContainsTag(MorphologicalTag.PASTTENSE) || ContainsTag(MorphologicalTag.NARRATIVE) ||
+                    ContainsTag(MorphologicalTag.PROGRESSIVE1) || ContainsTag(MorphologicalTag.FUTURE))
+                {
+                    return "Fh";
+                }
             }
 
             return null;
@@ -1079,39 +1266,58 @@ namespace MorphologicalAnalysis
         {
             var featureList = new List<string>();
             var pronType = GetPronType();
-            if (pronType != null && uPos != "ADJ" && uPos != "VERB" && uPos != "CCONJ")
+            if (pronType != null && uPos != "NOUN" && uPos != "ADJ" && uPos != "VERB" && uPos != "CCONJ" &&
+                uPos != "PROPN")
             {
                 featureList.Add("PronType=" + pronType);
             }
 
             var numType = GetNumType();
-            if (numType != null && uPos != "VERB")
+            if (numType != null && uPos != "VERB" && uPos != "NOUN" && uPos != "ADV")
             {
                 featureList.Add("NumType=" + numType);
             }
 
             var reflex = GetReflex();
-            if (reflex != null)
+            if (reflex != null && uPos != "ADJ" && uPos != "VERB")
             {
                 featureList.Add("Reflex=" + reflex);
             }
 
             var degree = GetDegree();
-            if (degree != null)
+            if (degree != null && uPos != "ADJ")
             {
                 featureList.Add("Degree=" + degree);
             }
 
-            if (IsNoun() || IsVerb())
+            if (IsNoun() || IsVerb() || root.GetName().Equals("mi") || (pronType != null && !pronType.Equals("Art")))
             {
                 var number = GetNumber();
                 if (number != null)
                 {
                     featureList.Add("Number=" + number);
                 }
+
+                var possessiveNumber = GetPossessiveNumber();
+                if (possessiveNumber != null)
+                {
+                    featureList.Add("Number[psor]=" + possessiveNumber);
+                }
+
+                var person = GetPerson();
+                if (person != null && uPos != "PROPN")
+                {
+                    featureList.Add("Person=" + person);
+                }
+
+                var possessivePerson = GetPossessivePerson();
+                if (possessivePerson != null && uPos != "PROPN")
+                {
+                    featureList.Add("Person[psor]=" + possessivePerson);
+                }
             }
 
-            if (IsNoun())
+            if (IsNoun() || (pronType != null && !pronType.Equals("Art")))
             {
                 var case_ = GetCase();
                 if (case_ != null)
@@ -1129,18 +1335,12 @@ namespace MorphologicalAnalysis
                 }
             }
 
-            if (IsVerb())
+            if (IsVerb() || root.GetName().Equals("mi"))
             {
                 var polarity = GetPolarity();
                 if (polarity != null)
                 {
                     featureList.Add("Polarity=" + polarity);
-                }
-
-                var person = GetPerson();
-                if (person != null && uPos != "PROPN")
-                {
-                    featureList.Add("Person=" + person);
                 }
 
                 var voice = GetVoice();
@@ -1150,7 +1350,7 @@ namespace MorphologicalAnalysis
                 }
 
                 var aspect = GetAspect();
-                if (aspect != null && uPos != "PROPN")
+                if (aspect != null && uPos != "PROPN" && !root.GetName().Equals("mi"))
                 {
                     featureList.Add("Aspect=" + aspect);
                 }
@@ -1162,15 +1362,21 @@ namespace MorphologicalAnalysis
                 }
 
                 var mood = GetMood();
-                if (mood != null && uPos != "PROPN")
+                if (mood != null && uPos != "PROPN" && !root.GetName().Equals("mi"))
                 {
                     featureList.Add("Mood=" + mood);
                 }
 
                 var verbForm = GetVerbForm();
-                if (verbForm != null)
+                if (verbForm != null && uPos != "PROPN")
                 {
                     featureList.Add("VerbForm=" + verbForm);
+                }
+
+                var evident = GetEvident();
+                if (mood != null && !root.GetName().Equals("mi"))
+                {
+                    featureList.Add("Evident=" + evident);
                 }
             }
 
@@ -1186,7 +1392,7 @@ namespace MorphologicalAnalysis
         /// "NUM" for numerals; "PRON" for pronouns; "ADP" for post participles; "SCONJ" or "CCONJ" for conjunctions.</returns>
         public string GetUniversalDependencyPos()
         {
-            String lemma = root.GetName();
+            var lemma = root.GetName();
             if (lemma.Equals("değil"))
             {
                 return "AUX";
