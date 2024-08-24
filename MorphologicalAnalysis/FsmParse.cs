@@ -1062,5 +1062,23 @@ namespace MorphologicalAnalysis
         {
             return TransitionList().CompareTo(((FsmParse)o).TransitionList());
         }
+
+        /// <summary>
+        /// In order to morphologically parse special proper nouns in Turkish, whose affixes obeys not the original but their
+        /// pronunciations, the morphologicalAnalysis method replaces the original word with its pronunciation and do the
+        /// rest. This method reverts it back, that is it restores its original form by replacing the pronunciations in the
+        /// parses with the original form.
+        /// </summary>
+        /// <param name="original">Original form of the proper noun.</param>
+        /// <param name="pronunciation">Pronunciation of the proper noun.</param>
+        public void RestoreOriginalForm(string original, string pronunciation)
+        {
+            root = new TxtWord(original, "IS_OA");
+            _form = original + _form.Substring(pronunciation.Length);
+            for (var i = 0; i < _formList.Count; i++) {
+                _formList[i] = original + _formList[i].Substring(pronunciation.Length);
+            }
+
+        }
     }
 }

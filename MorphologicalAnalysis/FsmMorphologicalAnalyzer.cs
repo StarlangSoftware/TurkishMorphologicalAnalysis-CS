@@ -7,6 +7,7 @@ using Corpus;
 using DataStructure.Cache;
 using Dictionary.Dictionary;
 using Dictionary.Dictionary.Trie;
+using Util;
 
 namespace MorphologicalAnalysis
 {
@@ -16,7 +17,8 @@ namespace MorphologicalAnalysis
         private Trie _suffixTrie;
         private readonly FiniteStateMachine _finiteStateMachine;
         private static int MAX_DISTANCE = 2;
-        private Dictionary<string, string> parsedSurfaceForms;
+        private Dictionary<string, string> _parsedSurfaceForms;
+        private Dictionary<string, string> _pronunciations;
         private readonly TxtDictionary _dictionary;
         private readonly LRUCache<string, FsmParseList> _cache;
         private readonly Dictionary<string, Regex> _mostUsedPatterns = new Dictionary<string, Regex>();
@@ -86,6 +88,8 @@ namespace MorphologicalAnalysis
             {
                 _cache = null;
             }
+
+            AddPronunciations("pronunciations.txt");
         }
 
         /**
@@ -155,18 +159,20 @@ namespace MorphologicalAnalysis
         /// <param name="fileName">Input file containing analyzable surface forms and their root forms.</param>
         public void AddParsedSurfaceForms(string fileName)
         {
-            parsedSurfaceForms = new Dictionary<string, string>();
             var assembly = typeof(FiniteStateMachine).Assembly;
             var stream = assembly.GetManifestResourceStream("MorphologicalAnalysis." + fileName);
-            var streamReader = new StreamReader(stream);
-            var line = streamReader.ReadLine();
-            while (line != null)
-            {
-                var items = line.Split();
-                parsedSurfaceForms[items[0]] = items[1];
-                line = streamReader.ReadLine();
-            }
-            streamReader.Close();
+            _parsedSurfaceForms = FileUtils.ReadHashMap(stream);
+        }
+
+        /// <summary>
+        /// Reads the file for foreign words and their pronunciations.
+        /// </summary>
+        /// <param name="fileName">Input file containing foreign words and their pronunciations.</param>
+        public void AddPronunciations(string fileName)
+        {
+            var assembly = typeof(FiniteStateMachine).Assembly;
+            var stream = assembly.GetManifestResourceStream("MorphologicalAnalysis." + fileName);
+            _pronunciations = FileUtils.ReadHashMap(stream);
         }
 
         /**
@@ -1697,9 +1703,12 @@ namespace MorphologicalAnalysis
         public FsmParseList MorphologicalAnalysis(string surfaceForm)
         {
             FsmParseList fsmParseList;
+            TxtWord newWord;
             var lowerCased = surfaceForm.ToLower(new CultureInfo("tr"));
-            if (parsedSurfaceForms != null &&
-                parsedSurfaceForms.ContainsKey(lowerCased) && !IsInteger(surfaceForm) &&
+            string possibleRootLowerCased = "", pronunciation = "";
+            bool isRootReplaced = false;
+            if (_parsedSurfaceForms != null &&
+                _parsedSurfaceForms.ContainsKey(lowerCased) && !IsInteger(surfaceForm) &&
                 !IsDouble(surfaceForm) && !IsPercent(surfaceForm) && !IsTime(surfaceForm) && !IsRange(surfaceForm) &&
                 !IsDate(surfaceForm))
             {
@@ -1715,12 +1724,10 @@ namespace MorphologicalAnalysis
 
             if (PatternMatches("(\\w|Ç|Ş|İ|Ü|Ö)\\.", surfaceForm))
             {
-                _dictionaryTrie.AddWord(surfaceForm.ToLower(new CultureInfo("tr")),
-                    new TxtWord(surfaceForm.ToLower(new CultureInfo("tr")), "IS_OA"));
+                _dictionaryTrie.AddWord(lowerCased, new TxtWord(lowerCased, "IS_OA"));
             }
 
-            var defaultFsmParse =
-                Analysis(surfaceForm.ToLower(new CultureInfo("tr")), IsProperNoun(surfaceForm));
+            var defaultFsmParse = Analysis(lowerCased, IsProperNoun(surfaceForm));
             if (defaultFsmParse.Count > 0)
             {
                 fsmParseList = new FsmParseList(defaultFsmParse);
@@ -1738,38 +1745,35 @@ namespace MorphologicalAnalysis
                     if (possibleRoot.Contains("/") || possibleRoot.Contains("\\/"))
                     {
                         _dictionaryTrie.AddWord(possibleRoot, new TxtWord(possibleRoot, "IS_KESIR"));
-                        fsmParse = Analysis(surfaceForm.ToLower(new CultureInfo("tr")), IsProperNoun(surfaceForm));
+                        fsmParse = Analysis(lowerCased, IsProperNoun(surfaceForm));
                     }
                     else
                     {
                         if (IsDate(possibleRoot))
                         {
                             _dictionaryTrie.AddWord(possibleRoot, new TxtWord(possibleRoot, "IS_DATE"));
-                            fsmParse = Analysis(surfaceForm.ToLower(new CultureInfo("tr")), IsProperNoun(surfaceForm));
+                            fsmParse = Analysis(lowerCased, IsProperNoun(surfaceForm));
                         }
                         else
                         {
                             if (PatternMatches("\\d+/\\d+", possibleRoot))
                             {
                                 _dictionaryTrie.AddWord(possibleRoot, new TxtWord(possibleRoot, "IS_KESIR"));
-                                fsmParse = Analysis(surfaceForm.ToLower(new CultureInfo("tr")),
-                                    IsProperNoun(surfaceForm));
+                                fsmParse = Analysis(lowerCased, IsProperNoun(surfaceForm));
                             }
                             else
                             {
                                 if (IsPercent(possibleRoot))
                                 {
                                     _dictionaryTrie.AddWord(possibleRoot, new TxtWord(possibleRoot, "IS_PERCENT"));
-                                    fsmParse = Analysis(surfaceForm.ToLower(new CultureInfo("tr")),
-                                        IsProperNoun(surfaceForm));
+                                    fsmParse = Analysis(lowerCased, IsProperNoun(surfaceForm));
                                 }
                                 else
                                 {
                                     if (IsTime(surfaceForm))
                                     {
                                         _dictionaryTrie.AddWord(possibleRoot, new TxtWord(possibleRoot, "IS_ZAMAN"));
-                                        fsmParse = Analysis(surfaceForm.ToLower(new CultureInfo("tr")),
-                                            IsProperNoun(surfaceForm));
+                                        fsmParse = Analysis(lowerCased, IsProperNoun(surfaceForm));
                                     }
                                     else
                                     {
@@ -1777,8 +1781,7 @@ namespace MorphologicalAnalysis
                                         {
                                             _dictionaryTrie.AddWord(possibleRoot,
                                                 new TxtWord(possibleRoot, "IS_RANGE"));
-                                            fsmParse = Analysis(surfaceForm.ToLower(new CultureInfo("tr")),
-                                                IsProperNoun(surfaceForm));
+                                            fsmParse = Analysis(lowerCased, IsProperNoun(surfaceForm));
                                         }
                                         else
                                         {
@@ -1786,8 +1789,7 @@ namespace MorphologicalAnalysis
                                             {
                                                 _dictionaryTrie.AddWord(possibleRoot,
                                                     new TxtWord(possibleRoot, "IS_SAYI"));
-                                                fsmParse = Analysis(surfaceForm.ToLower(new CultureInfo("tr")),
-                                                    IsProperNoun(surfaceForm));
+                                                fsmParse = Analysis(lowerCased, IsProperNoun(surfaceForm));
                                             }
                                             else
                                             {
@@ -1795,37 +1797,46 @@ namespace MorphologicalAnalysis
                                                 {
                                                     _dictionaryTrie.AddWord(possibleRoot,
                                                         new TxtWord(possibleRoot, "IS_REELSAYI"));
-                                                    fsmParse = Analysis(surfaceForm.ToLower(new CultureInfo("tr")),
-                                                        IsProperNoun(surfaceForm));
+                                                    fsmParse = Analysis(lowerCased, IsProperNoun(surfaceForm));
                                                 }
                                                 else
                                                 {
                                                     if (Word.IsCapital(possibleRoot))
                                                     {
-                                                        TxtWord newWord = null;
-                                                        if (_dictionary.GetWord(
-                                                                possibleRoot.ToLower(new CultureInfo("tr"))) != null)
+                                                        possibleRootLowerCased =
+                                                            possibleRoot.ToLower(new CultureInfo("tr"));
+                                                        if (_pronunciations.ContainsKey(possibleRootLowerCased))
                                                         {
-                                                            ((TxtWord)_dictionary.GetWord(
-                                                                    possibleRoot.ToLower(new CultureInfo("tr"))))
-                                                                .AddFlag("IS_OA");
+                                                            isRootReplaced = true;
+                                                            pronunciation = _pronunciations[possibleRootLowerCased];
+                                                            if (_dictionary.GetWord(pronunciation) != null)
+                                                            {
+                                                                ((TxtWord)_dictionary.GetWord(pronunciation)).AddFlag("IS_OA");
+                                                            }
+                                                            else
+                                                            {
+                                                                newWord = new TxtWord(pronunciation, "IS_OA");
+                                                                _dictionaryTrie.AddWord(pronunciation, newWord);
+                                                            }
+
+                                                            var replacedWord = pronunciation +
+                                                                               lowerCased.Substring(possibleRootLowerCased.Length);
+                                                            fsmParse = Analysis(replacedWord, IsProperNoun(surfaceForm));
                                                         }
                                                         else
                                                         {
-                                                            newWord = new TxtWord(
-                                                                possibleRoot.ToLower(new CultureInfo("tr")), "IS_OA");
-                                                            _dictionaryTrie.AddWord(
-                                                                possibleRoot.ToLower(new CultureInfo("tr")), newWord);
-                                                        }
+                                                            if (_dictionary.GetWord(possibleRootLowerCased) != null)
+                                                            {
+                                                                ((TxtWord)_dictionary.GetWord(possibleRootLowerCased)).AddFlag("IS_OA");
+                                                            }
+                                                            else
+                                                            {
+                                                                newWord = new TxtWord(possibleRootLowerCased, "IS_OA");
+                                                                _dictionaryTrie.AddWord(possibleRootLowerCased, newWord);
+                                                            }
 
-                                                        fsmParse = Analysis(surfaceForm.ToLower(new CultureInfo("tr")),
-                                                            IsProperNoun(surfaceForm));
-                                                        if (fsmParse.Count == 0 && newWord != null)
-                                                        {
-                                                            newWord.AddFlag("IS_KIS");
-                                                            fsmParse = Analysis(
-                                                                surfaceForm.ToLower(new CultureInfo("tr")),
-                                                                IsProperNoun(surfaceForm));
+                                                            fsmParse = Analysis(lowerCased, IsProperNoun(surfaceForm));
+
                                                         }
                                                     }
                                                 }
@@ -1839,6 +1850,13 @@ namespace MorphologicalAnalysis
                 }
             }
 
+            if (isRootReplaced)
+            {
+                foreach (var parse in fsmParse)
+                {
+                    parse.RestoreOriginalForm(possibleRootLowerCased, pronunciation);
+                }
+            }
             fsmParseList = new FsmParseList(fsmParse);
             if (fsmParseList.Size() > 0)
             {

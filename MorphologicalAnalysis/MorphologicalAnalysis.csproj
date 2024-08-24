@@ -16,6 +16,12 @@
 
     <ItemGroup>
       <PackageReference Include="NlpToolkit-Corpus" Version="1.0.13" />
+      <PackageReference Include="NlpToolkit-Dictionary" Version="1.0.18" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="pronunciations.txt" />
+      <EmbeddedResource Include="pronunciations.txt" />
     </ItemGroup>
 
 </Project>
