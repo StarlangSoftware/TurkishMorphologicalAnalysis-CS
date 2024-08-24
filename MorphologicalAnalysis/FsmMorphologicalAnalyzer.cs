@@ -1801,7 +1801,7 @@ namespace MorphologicalAnalysis
                                                 }
                                                 else
                                                 {
-                                                    if (Word.IsCapital(possibleRoot))
+                                                    if (Word.IsCapital(possibleRoot) || "QXW".Contains(possibleRoot.Substring(0, 1)))
                                                     {
                                                         possibleRootLowerCased =
                                                             possibleRoot.ToLower(new CultureInfo("tr"));
