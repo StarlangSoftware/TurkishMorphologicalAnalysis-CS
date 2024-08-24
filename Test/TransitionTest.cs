@@ -68,6 +68,7 @@ namespace Test
         [Test]
         public void TestA()
         {
+            Assert.True(fsm.MorphologicalAnalysis("saatinizi").Size() != 0);
             Assert.True(fsm.MorphologicalAnalysis("alkole").Size() != 0);
             Assert.True(fsm.MorphologicalAnalysis("anormale").Size() != 0);
             Assert.True(fsm.MorphologicalAnalysis("sakala").Size() != 0);

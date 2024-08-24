@@ -234,7 +234,7 @@ namespace MorphologicalAnalysis
                 return formation + 'ü';
             }
 
-            if ((TurkishLanguage.IsFrontUnroundedVowel(Word.LastVowel(formationToCheck)) && !root.NotObeysVowelHarmonyDuringAgglutination()) ||
+            if ((TurkishLanguage.IsFrontUnroundedVowel(Word.LastVowel(formationToCheck)) && (!root.NotObeysVowelHarmonyDuringAgglutination() || !rootWord)) ||
                 ((Word.LastVowel(formationToCheck) == 'a' || Word.LastVowel(formationToCheck) == 'â') && root.NotObeysVowelHarmonyDuringAgglutination()))
             {
                 return formation + 'i';

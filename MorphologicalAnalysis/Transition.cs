@@ -617,6 +617,9 @@ namespace MorphologicalAnalysis
                         {
                             formation = MorphotacticEngine.ResolveH(root, formation, i == 1, false, rootWord, formationToCheck);
                         }
+                        
+                        //Added for the second H in HnHz and HmHz.
+                        rootWord = false;
 
                         break;
                     case 'C':

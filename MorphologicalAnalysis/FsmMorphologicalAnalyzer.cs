@@ -1438,30 +1438,24 @@ namespace MorphologicalAnalysis
         /// </summary>
         /// <param name="surfaceForm">Surface form for which we will identify a possible new root form.</param>
         /// <returns>Possible new root form.</returns>
-        private TxtWord RootOfPossiblyNewWord(string surfaceForm){
+        private List<TxtWord> RootOfPossiblyNewWord(string surfaceForm){
             var words = _suffixTrie.GetWordsWithPrefix(ReverseString(surfaceForm));
-            var maxLength = 0;
-            string longestWord = null;
+            var candidateList = new List<TxtWord>();
             foreach (var word in words){
-                if (word.GetName().Length > maxLength){
-                    longestWord = surfaceForm.Substring(0, surfaceForm.Length - word.GetName().Length);
-                    maxLength = word.GetName().Length;
-                }
-            }
-            if (maxLength != 0){
+                var candidateWord = surfaceForm.Substring(0, surfaceForm.Length - word.GetName().Length);
                 TxtWord newWord;
-                if (longestWord.EndsWith("ğ")){
-                    longestWord = longestWord.Substring(0, longestWord.Length - 1) + "k";
-                    newWord = new TxtWord(longestWord, "CL_ISIM");
+                if (candidateWord.EndsWith("ğ")){
+                    candidateWord = candidateWord.Substring(0, candidateWord.Length - 1) + "k";
+                    newWord = new TxtWord(candidateWord, "CL_ISIM");
                     newWord.AddFlag("IS_SD");
                 } else {
-                    newWord = new TxtWord(longestWord, "CL_ISIM");
+                    newWord = new TxtWord(candidateWord, "CL_ISIM");
                     newWord.AddFlag("CL_FIIL");
                 }
-                _dictionaryTrie.AddWord(longestWord, newWord);
-                return newWord;
+                candidateList.Add(newWord);
+                _dictionaryTrie.AddWord(candidateWord, newWord);
             }
-            return null;
+            return candidateList;
         } 
 
         /**
@@ -1489,29 +1483,26 @@ namespace MorphologicalAnalysis
                 {
                     fsmParse.Add(new FsmParse(surfaceForm, _finiteStateMachine.GetState("ProperRoot")));
                 }
-                else
+                if (IsCode(surfaceForm))
                 {
-                    if (IsCode(surfaceForm))
+                    fsmParse.Add(new FsmParse(surfaceForm, _finiteStateMachine.GetState("CodeRoot")));
+                }
+                var newCandidateList = RootOfPossiblyNewWord(surfaceForm);
+                if (newCandidateList.Count != 0)
+                {
+                    foreach (var word in newCandidateList)
                     {
-                        fsmParse.Add(new FsmParse(surfaceForm, _finiteStateMachine.GetState("CodeRoot")));
-                    }
-                    else
-                    {
-                        var newRoot = RootOfPossiblyNewWord(surfaceForm);
-                        if (newRoot != null)
-                        {
-                            fsmParse.Add(new FsmParse(newRoot, _finiteStateMachine.GetState("VerbalRoot")));
-                            fsmParse.Add(new FsmParse(newRoot, _finiteStateMachine.GetState("NominalRoot")));
-                        }
-                        else
-                        {
-                            fsmParse.Add(new FsmParse(surfaceForm, _finiteStateMachine.GetState("NominalRoot")));
-                        }
+                        fsmParse.Add(new FsmParse(word, _finiteStateMachine.GetState("VerbalRoot")));
+                        fsmParse.Add(new FsmParse(word, _finiteStateMachine.GetState("NominalRoot")));
                     }
                 }
+                fsmParse.Add(new FsmParse(surfaceForm, _finiteStateMachine.GetState("NominalRoot")));
                 return new FsmParseList(ParseWord(fsmParse, surfaceForm));
             }
-            return currentParse;
+            else
+            {
+                return currentParse;
+            }
         }
 
         /**

@@ -10,12 +10,12 @@ namespace Test
 {
     public class FsmMorphologicalAnalyzerTest
     {
-        FsmMorphologicalAnalyzer fsm;
+        private FsmMorphologicalAnalyzer _fsm;
 
         [SetUp]
         public void Setup()
         {
-            fsm = new FsmMorphologicalAnalyzer();
+            _fsm = new FsmMorphologicalAnalyzer();
         }
 
         [Test]
@@ -32,7 +32,7 @@ namespace Test
             StreamReader streamReader;
             for (var i = 0; i < testWords.Length; i++)
             {
-                var word = (TxtWord)fsm.GetDictionary().GetWord(testWords[i]);
+                var word = (TxtWord)_fsm.GetDictionary().GetWord(testWords[i]);
                 var parsesExpected = new List<string>();
                 streamReader = new StreamReader("../../../parses/" + word.GetName() + ".txt");
                 var line = streamReader.ReadLine();
@@ -43,7 +43,7 @@ namespace Test
                 }
 
                 streamReader.Close();
-                parsesGenerated = fsm.GenerateAllParses(word, word.GetName().Length + 5);
+                parsesGenerated = _fsm.GenerateAllParses(word, word.GetName().Length + 5);
                 Assert.AreEqual(parsesExpected.Count, parsesGenerated.Count);
                 foreach (var parseGenerated in parsesGenerated)
                 {
@@ -53,71 +53,71 @@ namespace Test
         }
 
         [Test]
-        public void morphologicalAnalysisNewWords()
+        public void MorphologicalAnalysisNewWords()
         {
-            Assert.True(fsm.RobustMorphologicalAnalysis("googlecılardan").Size() != 0);
-            Assert.True(fsm.RobustMorphologicalAnalysis("zaptıraplaştırılmayana").Size() != 0);
-            Assert.True(fsm.RobustMorphologicalAnalysis("abzürtleşenmiş").Size() != 0);
-            Assert.True(fsm.RobustMorphologicalAnalysis("vışlığından").Size() != 0);
+            Assert.True(_fsm.RobustMorphologicalAnalysis("googlecılardan").Size() == 6);
+            Assert.True(_fsm.RobustMorphologicalAnalysis("zaptıraplaştırılmayana").Size() == 8);
+            Assert.True(_fsm.RobustMorphologicalAnalysis("abzürtleşenmiş").Size() == 5);
+            Assert.True(_fsm.RobustMorphologicalAnalysis("vışlığından").Size() == 8);
         }
         
         [Test]
-        public void morphologicalAnalysisSpecialProperNoun()
+        public void MorphologicalAnalysisSpecialProperNoun()
         {
-            Assert.True(fsm.MorphologicalAnalysis("Times'ın").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("Times'tır").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("Times'mış").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("Twitter'ın").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("Twitter'dır").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("Twitter'mış").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("Times'ın").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("Times'tır").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("Times'mış").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("Twitter'ın").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("Twitter'dır").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("Twitter'mış").Size() != 0);
         }
 
         [Test]
-        public void morphologicalAnalysisDataTimeNumber()
+        public void MorphologicalAnalysisDataTimeNumber()
         {
-            Assert.True(fsm.MorphologicalAnalysis("3/4").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("3\\/4").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("4/2/1973").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("14/2/1993").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("14/12/1933").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("6/12/1903").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("%34.5").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("%3").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("%56").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("2:3").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("12:3").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("4:23").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("11:56").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("1:2:3").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("3:12:3").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("5:4:23").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("7:11:56").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("12:2:3").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("10:12:3").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("11:4:23").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("22:11:56").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("45").Size() != 0);
-            Assert.True(fsm.MorphologicalAnalysis("34.23").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("3/4").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("3\\/4").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("4/2/1973").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("14/2/1993").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("14/12/1933").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("6/12/1903").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("%34.5").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("%3").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("%56").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("2:3").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("12:3").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("4:23").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("11:56").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("1:2:3").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("3:12:3").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("5:4:23").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("7:11:56").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("12:2:3").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("10:12:3").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("11:4:23").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("22:11:56").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("45").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("34.23").Size() != 0);
         }
 
         [Test]
-        public void morphologicalAnalysisProperNoun()
+        public void MorphologicalAnalysisProperNoun()
         {
-            var dictionary = fsm.GetDictionary();
+            var dictionary = _fsm.GetDictionary();
             for (var i = 0; i < dictionary.Size(); i++)
             {
                 var word = (TxtWord)dictionary.GetWord(i);
                 if (word.IsProperNoun())
                 {
-                    Assert.True(fsm.MorphologicalAnalysis(word.GetName().ToUpper(new CultureInfo("tr"))).Size() != 0);
+                    Assert.True(_fsm.MorphologicalAnalysis(word.GetName().ToUpper(new CultureInfo("tr"))).Size() != 0);
                 }
             }
         }
 
         [Test]
-        public void morphologicalAnalysisNounSoftenDuringSuffixation()
+        public void MorphologicalAnalysisNounSoftenDuringSuffixation()
         {
-            var dictionary = fsm.GetDictionary();
+            var dictionary = _fsm.GetDictionary();
             for (var i = 0; i < dictionary.Size(); i++)
             {
                 var word = (TxtWord)dictionary.GetWord(i);
@@ -127,15 +127,15 @@ namespace Test
                     var startState = new State("NominalRoot", true, false);
                     var transition = new Transition(transitionState, "yH", "ACC");
                     string surfaceForm = transition.MakeTransition(word, word.GetName(), startState);
-                    Assert.True(fsm.MorphologicalAnalysis(surfaceForm).Size() != 0);
+                    Assert.True(_fsm.MorphologicalAnalysis(surfaceForm).Size() != 0);
                 }
             }
         }
 
         [Test]
-        public void morphologicalAnalysisVowelAChangesToIDuringYSuffixation()
+        public void MorphologicalAnalysisVowelAChangesToIDuringYSuffixation()
         {
-            var dictionary = fsm.GetDictionary();
+            var dictionary = _fsm.GetDictionary();
             for (var i = 0; i < dictionary.Size(); i++)
             {
                 var word = (TxtWord)dictionary.GetWord(i);
@@ -145,15 +145,15 @@ namespace Test
                     var startState = new State("VerbalRoot", true, false);
                     var transition = new Transition(transitionState, "Hyor", "PROG1");
                     string surfaceForm = transition.MakeTransition(word, word.GetName(), startState);
-                    Assert.True(fsm.MorphologicalAnalysis(surfaceForm).Size() != 0);
+                    Assert.True(_fsm.MorphologicalAnalysis(surfaceForm).Size() != 0);
                 }
             }
         }
 
         [Test]
-        public void morphologicalAnalysisIsPortmanteau()
+        public void MorphologicalAnalysisIsPortmanteau()
         {
-            TxtDictionary dictionary = fsm.GetDictionary();
+            TxtDictionary dictionary = _fsm.GetDictionary();
             for (var i = 0; i < dictionary.Size(); i++)
             {
                 var word = (TxtWord)dictionary.GetWord(i);
@@ -200,15 +200,15 @@ namespace Test
                     }
 
                     surfaceForm = transition.MakeTransition(word, rootForm, startState);
-                    Assert.True(fsm.MorphologicalAnalysis(surfaceForm).Size() != 0);
+                    Assert.True(_fsm.MorphologicalAnalysis(surfaceForm).Size() != 0);
                 }
             }
         }
 
         [Test]
-        public void morphologicalAnalysisNotObeysVowelHarmonyDuringAgglutination()
+        public void MorphologicalAnalysisNotObeysVowelHarmonyDuringAgglutination()
         {
-            TxtDictionary dictionary = fsm.GetDictionary();
+            TxtDictionary dictionary = _fsm.GetDictionary();
             for (var i = 0; i < dictionary.Size(); i++)
             {
                 var word = (TxtWord)dictionary.GetWord(i);
@@ -218,15 +218,15 @@ namespace Test
                     var startState = new State("NominalRoot", true, false);
                     var transition = new Transition(transitionState, "yH", "ACC");
                     string surfaceForm = transition.MakeTransition(word, word.GetName(), startState);
-                    Assert.True(fsm.MorphologicalAnalysis(surfaceForm).Size() != 0);
+                    Assert.True(_fsm.MorphologicalAnalysis(surfaceForm).Size() != 0);
                 }
             }
         }
 
         [Test]
-        public void morphologicalAnalysisLastIdropsDuringSuffixation()
+        public void MorphologicalAnalysisLastIdropsDuringSuffixation()
         {
-            TxtDictionary dictionary = fsm.GetDictionary();
+            TxtDictionary dictionary = _fsm.GetDictionary();
             for (var i = 0; i < dictionary.Size(); i++)
             {
                 var word = (TxtWord)dictionary.GetWord(i);
@@ -236,15 +236,15 @@ namespace Test
                     var startState = new State("NominalRoot", true, false);
                     var transition = new Transition(transitionState, "yH", "ACC");
                     string surfaceForm = transition.MakeTransition(word, word.GetName(), startState);
-                    Assert.True(fsm.MorphologicalAnalysis(surfaceForm).Size() != 0);
+                    Assert.True(_fsm.MorphologicalAnalysis(surfaceForm).Size() != 0);
                 }
             }
         }
 
         [Test]
-        public void morphologicalAnalysisVerbSoftenDuringSuffixation()
+        public void MorphologicalAnalysisVerbSoftenDuringSuffixation()
         {
-            TxtDictionary dictionary = fsm.GetDictionary();
+            TxtDictionary dictionary = _fsm.GetDictionary();
             for (var i = 0; i < dictionary.Size(); i++)
             {
                 var word = (TxtWord)dictionary.GetWord(i);
@@ -254,15 +254,15 @@ namespace Test
                     var startState = new State("VerbalRoot", true, false);
                     var transition = new Transition(transitionState, "Hyor", "PROG1");
                     string surfaceForm = transition.MakeTransition(word, word.GetName(), startState);
-                    Assert.True(fsm.MorphologicalAnalysis(surfaceForm).Size() != 0);
+                    Assert.True(_fsm.MorphologicalAnalysis(surfaceForm).Size() != 0);
                 }
             }
         }
 
         [Test]
-        public void morphologicalAnalysisDuplicatesDuringSuffixation()
+        public void MorphologicalAnalysisDuplicatesDuringSuffixation()
         {
-            TxtDictionary dictionary = fsm.GetDictionary();
+            TxtDictionary dictionary = _fsm.GetDictionary();
             for (var i = 0; i < dictionary.Size(); i++)
             {
                 var word = (TxtWord)dictionary.GetWord(i);
@@ -272,15 +272,15 @@ namespace Test
                     var startState = new State("NominalRoot", true, false);
                     var transition = new Transition(transitionState, "yH", "ACC");
                     string surfaceForm = transition.MakeTransition(word, word.GetName(), startState);
-                    Assert.True(fsm.MorphologicalAnalysis(surfaceForm).Size() != 0);
+                    Assert.True(_fsm.MorphologicalAnalysis(surfaceForm).Size() != 0);
                 }
             }
         }
 
         [Test]
-        public void morphologicalAnalysisEndingKChangesIntoG()
+        public void MorphologicalAnalysisEndingKChangesIntoG()
         {
-            TxtDictionary dictionary = fsm.GetDictionary();
+            TxtDictionary dictionary = _fsm.GetDictionary();
             for (var i = 0; i < dictionary.Size(); i++)
             {
                 var word = (TxtWord)dictionary.GetWord(i);
@@ -290,15 +290,15 @@ namespace Test
                     var startState = new State("NominalRoot", true, false);
                     var transition = new Transition(transitionState, "yH", "ACC");
                     string surfaceForm = transition.MakeTransition(word, word.GetName(), startState);
-                    Assert.True(fsm.MorphologicalAnalysis(surfaceForm).Size() != 0);
+                    Assert.True(_fsm.MorphologicalAnalysis(surfaceForm).Size() != 0);
                 }
             }
         }
 
         [Test]
-        public void morphologicalAnalysisLastIdropsDuringPassiveSuffixation()
+        public void MorphologicalAnalysisLastIdropsDuringPassiveSuffixation()
         {
-            TxtDictionary dictionary = fsm.GetDictionary();
+            TxtDictionary dictionary = _fsm.GetDictionary();
             for (var i = 0; i < dictionary.Size(); i++)
             {
                 var word = (TxtWord)dictionary.GetWord(i);
@@ -308,43 +308,43 @@ namespace Test
                     var startState = new State("VerbalRoot", true, false);
                     var transition = new Transition(transitionState, "Hl", "^DB+VERB+PASS");
                     string surfaceForm = transition.MakeTransition(word, word.GetName(), startState);
-                    Assert.True(fsm.MorphologicalAnalysis(surfaceForm).Size() != 0);
+                    Assert.True(_fsm.MorphologicalAnalysis(surfaceForm).Size() != 0);
                 }
             }
         }
 
         [Test]
-        public void testReplaceWord()
+        public void TestReplaceWord()
         {
             Assert.AreEqual("Şvesterine söyle kazağı güzelmiş",
-                fsm.ReplaceWord(new Sentence("Hemşirene söyle kazağı güzelmiş"), "hemşire", "şvester").ToString());
+                _fsm.ReplaceWord(new Sentence("Hemşirene söyle kazağı güzelmiş"), "hemşire", "şvester").ToString());
             Assert.AreEqual("Burada çok abartma var",
-                fsm.ReplaceWord(new Sentence("Burada çok mübalağa var"), "mübalağa", "abartma").ToString());
+                _fsm.ReplaceWord(new Sentence("Burada çok mübalağa var"), "mübalağa", "abartma").ToString());
             Assert.AreEqual("Bu bina çok kötü şekilsizleştirildi",
-                fsm.ReplaceWord(new Sentence("Bu bina çok kötü biçimsizleştirildi"), "biçimsizleş", "şekilsizleş")
+                _fsm.ReplaceWord(new Sentence("Bu bina çok kötü biçimsizleştirildi"), "biçimsizleş", "şekilsizleş")
                     .ToString());
             Assert.AreEqual("Abim geçen yıl ölmüştü gibi",
-                fsm.ReplaceWord(new Sentence("Abim geçen yıl son yolculuğa çıkmıştı gibi"), "son yolculuğa çık", "öl")
+                _fsm.ReplaceWord(new Sentence("Abim geçen yıl son yolculuğa çıkmıştı gibi"), "son yolculuğa çık", "öl")
                     .ToString());
             Assert.AreEqual("Hemşirenle evlendim",
-                fsm.ReplaceWord(new Sentence("Kız kardeşinle evlendim"), "kız kardeş", "hemşire").ToString());
+                _fsm.ReplaceWord(new Sentence("Kız kardeşinle evlendim"), "kız kardeş", "hemşire").ToString());
             Assert.AreEqual("Dün yaptığı güreş maçında yenildi",
-                fsm.ReplaceWord(new Sentence("Dün yaptığı güreş maçında mağlup oldu"), "mağlup ol", "yenil")
+                _fsm.ReplaceWord(new Sentence("Dün yaptığı güreş maçında mağlup oldu"), "mağlup ol", "yenil")
                     .ToString());
             Assert.AreEqual("Abim geçen yıl son yolculuğa çıkmıştı gibi",
-                fsm.ReplaceWord(new Sentence("Abim geçen yıl ölmüştü gibi"), "öl", "son yolculuğa çık").ToString());
+                _fsm.ReplaceWord(new Sentence("Abim geçen yıl ölmüştü gibi"), "öl", "son yolculuğa çık").ToString());
             Assert.AreEqual("Kız kardeşinle evlendim",
-                fsm.ReplaceWord(new Sentence("Hemşirenle evlendim"), "hemşire", "kız kardeş").ToString());
+                _fsm.ReplaceWord(new Sentence("Hemşirenle evlendim"), "hemşire", "kız kardeş").ToString());
             Assert.AreEqual("Dün yaptığı güreş maçında mağlup oldu",
-                fsm.ReplaceWord(new Sentence("Dün yaptığı güreş maçında yenildi"), "yenil", "mağlup ol").ToString());
+                _fsm.ReplaceWord(new Sentence("Dün yaptığı güreş maçında yenildi"), "yenil", "mağlup ol").ToString());
             Assert.AreEqual("Dün yaptığı güreş maçında alt oldu sanki",
-                fsm.ReplaceWord(new Sentence("Dün yaptığı güreş maçında mağlup oldu sanki"), "mağlup ol", "alt ol")
+                _fsm.ReplaceWord(new Sentence("Dün yaptığı güreş maçında mağlup oldu sanki"), "mağlup ol", "alt ol")
                     .ToString());
             Assert.AreEqual("Yemin billah vermişlerdi vazoyu kırmadığına",
-                fsm.ReplaceWord(new Sentence("Yemin etmişlerdi vazoyu kırmadığına"), "yemin et", "yemin billah ver")
+                _fsm.ReplaceWord(new Sentence("Yemin etmişlerdi vazoyu kırmadığına"), "yemin et", "yemin billah ver")
                     .ToString());
             Assert.AreEqual("Yemin etmişlerdi vazoyu kırmadığına",
-                fsm.ReplaceWord(new Sentence("Yemin billah vermişlerdi vazoyu kırmadığına"), "yemin billah ver",
+                _fsm.ReplaceWord(new Sentence("Yemin billah vermişlerdi vazoyu kırmadığına"), "yemin billah ver",
                     "yemin et").ToString());
         }
     }
