@@ -553,7 +553,7 @@ namespace MorphologicalAnalysis
             }
 
             if (TurkishLanguage.IsConsonantDrop(WithFirstChar()) &&
-                !TurkishLanguage.IsVowel(stem[stem.Length - 1]) &&
+                stem.Length > 1 && !TurkishLanguage.IsVowel(stem[stem.Length - 1]) &&
                 (root.IsNumeral() || root.IsReal() || root.IsFraction() || root.IsTime() || root.IsDate() ||
                  root.IsPercent() || root.IsRange()) && (root.GetName().EndsWith("1") || root.GetName().EndsWith("3") ||
                                                          root.GetName().EndsWith("4") || root.GetName().EndsWith("5") ||
