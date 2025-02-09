@@ -3,8 +3,8 @@
     <PropertyGroup>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageId>NlpToolkit-MorphologicalAnalysis</PackageId>
-        <PackageVersion>1.0.22</PackageVersion>
-        <TargetFrameworks>netcoreapp3.1;net8.0</TargetFrameworks>
+        <PackageVersion>1.0.23</PackageVersion>
+        <TargetFramework>net8.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
@@ -15,8 +15,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="NlpToolkit-Corpus" Version="1.0.13" />
-      <PackageReference Include="NlpToolkit-Dictionary" Version="1.0.18" />
+      <PackageReference Include="NlpToolkit-Corpus" Version="1.0.17" />
+      <PackageReference Include="NlpToolkit-Dictionary" Version="1.0.19" />
     </ItemGroup>
 
     <ItemGroup>
