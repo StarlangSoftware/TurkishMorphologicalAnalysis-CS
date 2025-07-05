@@ -766,6 +766,22 @@ namespace MorphologicalAnalysis
         /// of the parse is plural (Contains A1PL, A2PL, A3PL).</returns>
         private string GetNumber()
         {
+            if (LastIGContainsTag(MorphologicalTag.A1SG) || LastIGContainsTag(MorphologicalTag.A2SG) ||
+                LastIGContainsTag(MorphologicalTag.A3SG)
+                || LastIGContainsTag(MorphologicalTag.P1SG) || LastIGContainsTag(MorphologicalTag.P2SG) ||
+                LastIGContainsTag(MorphologicalTag.P3SG))
+            {
+                return "Sing";
+            }
+
+            if (LastIGContainsTag(MorphologicalTag.A1PL) || LastIGContainsTag(MorphologicalTag.A2PL) ||
+                LastIGContainsTag(MorphologicalTag.A3PL)
+                || LastIGContainsTag(MorphologicalTag.P1PL) || LastIGContainsTag(MorphologicalTag.P2PL) ||
+                LastIGContainsTag(MorphologicalTag.P3PL))
+            {
+                return "Plur";
+            }
+
             if (ContainsTag(MorphologicalTag.A1SG) || ContainsTag(MorphologicalTag.A2SG) ||
                 ContainsTag(MorphologicalTag.A3SG)
                 || ContainsTag(MorphologicalTag.P1SG) || ContainsTag(MorphologicalTag.P2SG) ||
@@ -792,6 +808,18 @@ namespace MorphologicalAnalysis
         /// possessive agreement of the parse is plural (Contains P1PL, P2PL, P3PL).</returns>
         private string GetPossessiveNumber()
         {
+            if (LastIGContainsTag(MorphologicalTag.P1SG) || LastIGContainsTag(MorphologicalTag.P2SG) ||
+                LastIGContainsTag(MorphologicalTag.P3SG))
+            {
+                return "Sing";
+            }
+
+            if (LastIGContainsTag(MorphologicalTag.P1PL) || LastIGContainsTag(MorphologicalTag.P2PL) ||
+                LastIGContainsTag(MorphologicalTag.P3PL))
+            {
+                return "Plur";
+            }
+
             if (ContainsTag(MorphologicalTag.P1SG) || ContainsTag(MorphologicalTag.P2SG) ||
                 ContainsTag(MorphologicalTag.P3SG))
             {
@@ -933,6 +961,27 @@ namespace MorphologicalAnalysis
         /// <returns>"1" for first person; "2" for second person; "3" for third person.</returns>
         private string GetPerson()
         {
+            if (LastIGContainsTag(MorphologicalTag.A1SG) || LastIGContainsTag(MorphologicalTag.A1PL)
+                                                         || LastIGContainsTag(MorphologicalTag.P1SG) ||
+                                                         LastIGContainsTag(MorphologicalTag.P1PL))
+            {
+                return "1";
+            }
+
+            if (LastIGContainsTag(MorphologicalTag.A2SG) || LastIGContainsTag(MorphologicalTag.A2PL)
+                                                         || LastIGContainsTag(MorphologicalTag.P2SG) ||
+                                                         LastIGContainsTag(MorphologicalTag.P2PL))
+            {
+                return "2";
+            }
+
+            if (LastIGContainsTag(MorphologicalTag.A3SG) || LastIGContainsTag(MorphologicalTag.A3PL)
+                                                         || LastIGContainsTag(MorphologicalTag.P3SG) ||
+                                                         LastIGContainsTag(MorphologicalTag.P3PL))
+            {
+                return "3";
+            }
+
             if (ContainsTag(MorphologicalTag.A1SG) || ContainsTag(MorphologicalTag.A1PL)
                                                    || ContainsTag(MorphologicalTag.P1SG) ||
                                                    ContainsTag(MorphologicalTag.P1PL))
@@ -963,6 +1012,21 @@ namespace MorphologicalAnalysis
         /// <returns>"1" for first person; "2" for second person; "3" for third person.</returns>
         private string GetPossessivePerson()
         {
+            if (LastIGContainsTag(MorphologicalTag.P1SG) || LastIGContainsTag(MorphologicalTag.P1PL))
+            {
+                return "1";
+            }
+
+            if (LastIGContainsTag(MorphologicalTag.P2SG) || LastIGContainsTag(MorphologicalTag.P2PL))
+            {
+                return "2";
+            }
+
+            if (LastIGContainsTag(MorphologicalTag.P3SG) || LastIGContainsTag(MorphologicalTag.P3PL))
+            {
+                return "3";
+            }
+
             if (ContainsTag(MorphologicalTag.P1SG) || ContainsTag(MorphologicalTag.P1PL))
             {
                 return "1";
