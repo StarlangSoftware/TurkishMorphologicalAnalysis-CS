@@ -975,7 +975,7 @@ namespace MorphologicalAnalysis
         private List<FsmParse> ParseWord(List<FsmParse> fsmParse, int maxLength)
         {
             var result = new List<FsmParse>();
-            var resultSuffixList = new List<string>();
+            var resultTransitionList = new List<string>();
             while (fsmParse.Count > 0)
             {
                 var currentFsmParse = fsmParse[0];
@@ -985,13 +985,13 @@ namespace MorphologicalAnalysis
                 var currentSurfaceForm = currentFsmParse.GetSurfaceForm();
                 if (currentState.IsEndState() && currentSurfaceForm.Length <= maxLength)
                 {
-                    var currentSuffixList = currentFsmParse.SuffixList();
+                    var currentTransitionList = currentSurfaceForm + " " + currentFsmParse.TransitionList();
 
-                    if (!resultSuffixList.Contains(currentSuffixList))
+                    if (!resultTransitionList.Contains(currentTransitionList))
                     {
                         result.Add(currentFsmParse);
                         currentFsmParse.ConstructInflectionalGroups();
-                        resultSuffixList.Add(currentSuffixList);
+                        resultTransitionList.Add(currentTransitionList);
                     }
                 }
 
@@ -1012,7 +1012,7 @@ namespace MorphologicalAnalysis
         private List<FsmParse> ParseWord(List<FsmParse> fsmParse, string surfaceForm)
         {
             var result = new List<FsmParse>();
-            var resultSuffixList = new List<string>();
+            var resultTransitionList = new List<string>();
             while (fsmParse.Count > 0)
             {
                 var currentFsmParse = fsmParse[0];
@@ -1023,12 +1023,12 @@ namespace MorphologicalAnalysis
                 if (currentState.IsEndState() &&
                     string.Equals(currentSurfaceForm, surfaceForm, StringComparison.Ordinal))
                 {
-                    var currentSuffixList = currentFsmParse.SuffixList();
-                    if (!resultSuffixList.Contains(currentSuffixList))
+                    var currentTransitionList = currentFsmParse.TransitionList();
+                    if (!resultTransitionList.Contains(currentTransitionList))
                     {
                         result.Add(currentFsmParse);
                         currentFsmParse.ConstructInflectionalGroups();
-                        resultSuffixList.Add(currentSuffixList);
+                        resultTransitionList.Add(currentTransitionList);
                     }
                 }
 

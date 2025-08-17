@@ -65,7 +65,7 @@ namespace Test
             foreach (var state in stateList){
                 transitionCount += fsm.GetTransitions(state).Count;
             }
-            Assert.AreEqual(779, transitionCount);
+            Assert.AreEqual(783, transitionCount);
         }
 
         [Test]

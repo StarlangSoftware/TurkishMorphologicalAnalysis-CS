@@ -33,7 +33,8 @@ namespace MorphologicalAnalysis
             "INF2", "INF3", "BSTAG", "ESTAG", "BTTAG",
             "ETTAG", "BDTAG", "EDTAG", "INF1", "ASLONGAS",
             "DIST", "ADAMANTLY", "PERCENT", "WITHOUTBEINGABLETOHAVEDONESO", "DIM",
-            "PERS", "FRACTION", "HASHTAG", "EMAIL", "DATE", "NONE", "CODE", "METRIC"
+            "PERS", "FRACTION", "HASHTAG", "EMAIL", "DATE", "NONE", "CODE", "METRIC",
+            "POL", "URGE"
         };
 
         public static readonly MorphologicalTag[] MorphoTags =
@@ -113,7 +114,7 @@ namespace MorphologicalAnalysis
             MorphologicalTag.DIMENSION,
             MorphologicalTag.PERSONALPRONOUN, MorphologicalTag.FRACTION, MorphologicalTag.HASHTAG, MorphologicalTag
                 .EMAIL,
-            MorphologicalTag.DATE, MorphologicalTag.CODE, MorphologicalTag.METRIC, MorphologicalTag.NONE
+            MorphologicalTag.DATE, MorphologicalTag.CODE, MorphologicalTag.METRIC, MorphologicalTag.POLITE, MorphologicalTag.URGE, MorphologicalTag.NONE
         };
 
         /**
