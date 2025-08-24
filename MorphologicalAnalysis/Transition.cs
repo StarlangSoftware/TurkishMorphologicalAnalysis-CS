@@ -223,7 +223,7 @@ namespace MorphologicalAnalysis
 
             return true;
         }
-        
+
         /**
          * <summary>The withFirstChar method returns the first character of the with variable.</summary>
          *
@@ -283,11 +283,13 @@ namespace MorphologicalAnalysis
          * yAbil, yAyaz, yAkal, yAkoy, yAmA, yHcH, HCH, Hr, Hs, Hn, yHn", yHnHz, Ar, Hl").</summary>
          *
          * <param name="root">{@link TxtWord} input.</param>
+         * <param name="startState">{@link State} input.</param>
          * <returns>true if there is softening during suffixation of the given root, false otherwise.</returns>
          */
-        public bool SoftenDuringSuffixation(TxtWord root)
+        public bool SoftenDuringSuffixation(TxtWord root, State startState)
         {
-            if ((root.IsNominal() || root.IsAdjective()) && root.NounSoftenDuringSuffixation() &&
+            if (!startState.GetName().StartsWith("VerbalRoot") && (root.IsNominal() || root.IsAdjective()) &&
+                root.NounSoftenDuringSuffixation() &&
                 (_with == "Hm" || _with == "nDAn" || _with == "ncA" || _with == "nDA" || _with == "yA" ||
                  _with == "yHm" || _with == "yHz" || _with == "yH" || _with == "nH" ||
                  _with == "nA" || _with == "nHn" || _with == "H" || _with == "sH" || _with == "Hn" ||
@@ -296,22 +298,23 @@ namespace MorphologicalAnalysis
                 return true;
             }
 
-            if (root.IsVerb() && root.VerbSoftenDuringSuffixation() && (_with.StartsWith("Hyor") || _with == "yHs" ||
-                                                                        _with == "yAn" || _with == "yA" ||
-                                                                        _with.StartsWith("yAcAk") || _with == "yAsH" ||
-                                                                        _with == "yHncA" ||
-                                                                        _with == "yHp" || _with == "yAlH" ||
-                                                                        _with == "yArAk" || _with == "yAdur" ||
-                                                                        _with == "yHver" ||
-                                                                        _with == "yAgel" || _with == "yAgor" ||
-                                                                        _with == "yAbil" || _with == "yAyaz" ||
-                                                                        _with == "yAkal" ||
-                                                                        _with == "yAkoy" || _with == "yAmA" ||
-                                                                        _with == "yHcH" || _with == "HCH" ||
-                                                                        _with.StartsWith("Hr") || _with == "Hs" ||
-                                                                        _with == "Hn" || _with == "yHn" ||
-                                                                        _with == "yHnHz" ||
-                                                                        _with.StartsWith("Ar") || _with == "Hl"))
+            if (startState.GetName().StartsWith("VerbalRoot") && root.IsVerb() && root.VerbSoftenDuringSuffixation() &&
+                (_with.StartsWith("Hyor") || _with == "yHs" ||
+                 _with == "yAn" || _with == "yA" ||
+                 _with.StartsWith("yAcAk") || _with == "yAsH" ||
+                 _with == "yHncA" ||
+                 _with == "yHp" || _with == "yAlH" ||
+                 _with == "yArAk" || _with == "yAdur" ||
+                 _with == "yHver" ||
+                 _with == "yAgel" || _with == "yAgor" ||
+                 _with == "yAbil" || _with == "yAyaz" ||
+                 _with == "yAkal" ||
+                 _with == "yAkoy" || _with == "yAmA" ||
+                 _with == "yHcH" || _with == "HCH" ||
+                 _with.StartsWith("Hr") || _with == "Hs" ||
+                 _with == "Hn" || _with == "yHn" ||
+                 _with == "yHnHz" ||
+                 _with.StartsWith("Ar") || _with == "Hl"))
             {
                 return true;
             }
@@ -420,7 +423,7 @@ namespace MorphologicalAnalysis
                             TurkishLanguage.IsConsonantDrop(_with[0]))
                         {
                             //---duplicatesDuringSuffixation---
-                            if (SoftenDuringSuffixation(root))
+                            if (SoftenDuringSuffixation(root, startState))
                             {
                                 //--extra softenDuringSuffixation
                                 switch (Word.LastPhoneme(stem))
@@ -451,7 +454,7 @@ namespace MorphologicalAnalysis
                                 !startState.GetName().StartsWith("ProperRoot") && StartWithVowelOrConsonantDrops())
                             {
                                 //---lastIdropsDuringSuffixation---
-                                if (SoftenDuringSuffixation(root))
+                                if (SoftenDuringSuffixation(root, startState))
                                 {
                                     //---softenDuringSuffixation---
                                     switch (Word.LastPhoneme(stem))
@@ -487,7 +490,7 @@ namespace MorphologicalAnalysis
                                     case 'p':
                                         //adap->adabı, amip->amibi, azap->azabı, gazap->gazabı
                                         if (StartWithVowelOrConsonantDrops() && rootWord &&
-                                            SoftenDuringSuffixation(root))
+                                            SoftenDuringSuffixation(root, startState))
                                         {
                                             formation = stem.Substring(0, stem.Length - 1) + 'b';
                                         }
@@ -497,7 +500,7 @@ namespace MorphologicalAnalysis
                                         //abat->abadı, adet->adedi, akort->akordu, armut->armudu
                                         //affet->affedi, yoket->yokedi, sabret->sabredi, rakset->raksedi
                                         if (StartWithVowelOrConsonantDrops() && rootWord &&
-                                            SoftenDuringSuffixation(root))
+                                            SoftenDuringSuffixation(root, startState))
                                         {
                                             formation = stem.Substring(0, stem.Length - 1) + 'd';
                                         }
@@ -506,7 +509,7 @@ namespace MorphologicalAnalysis
                                     case 'ç':
                                         //ağaç->ağacı, almaç->almacı, akaç->akacı, avuç->avucu
                                         if (StartWithVowelOrConsonantDrops() && rootWord &&
-                                            SoftenDuringSuffixation(root))
+                                            SoftenDuringSuffixation(root, startState))
                                         {
                                             formation = stem.Substring(0, stem.Length - 1) + 'c';
                                         }
@@ -515,7 +518,7 @@ namespace MorphologicalAnalysis
                                     case 'g':
                                         //arkeolog->arkeoloğu, filolog->filoloğu, minerolog->mineroloğu
                                         if (StartWithVowelOrConsonantDrops() && rootWord &&
-                                            SoftenDuringSuffixation(root))
+                                            SoftenDuringSuffixation(root, startState))
                                         {
                                             formation = stem.Substring(0, stem.Length - 1) + 'ğ';
                                         }
@@ -534,7 +537,7 @@ namespace MorphologicalAnalysis
                                             //ablak->ablağı, küllük->küllüğü, kitaplık->kitaplığı, evcilik->evciliği
                                             if (StartWithVowelOrConsonantDrops() &&
                                                 (!rootWord ||
-                                                 (SoftenDuringSuffixation(root) &&
+                                                 (SoftenDuringSuffixation(root, startState) &&
                                                   (!root.IsProperNoun() ||
                                                    !startState.ToString().Equals("ProperRoot")))))
                                             {
@@ -611,13 +614,15 @@ namespace MorphologicalAnalysis
                     case 'H':
                         if (_with[0] != '\'')
                         {
-                            formation = MorphotacticEngine.ResolveH(root, formation, i == 0, _with.StartsWith("Hyor"), rootWord, formationToCheck);
+                            formation = MorphotacticEngine.ResolveH(root, formation, i == 0, _with.StartsWith("Hyor"),
+                                rootWord, formationToCheck);
                         }
                         else
                         {
-                            formation = MorphotacticEngine.ResolveH(root, formation, i == 1, false, rootWord, formationToCheck);
+                            formation = MorphotacticEngine.ResolveH(root, formation, i == 1, false, rootWord,
+                                formationToCheck);
                         }
-                        
+
                         //Added for the second H in HnHz and HmHz.
                         rootWord = false;
 
@@ -649,7 +654,7 @@ namespace MorphologicalAnalysis
 
             return formation;
         }
-        
+
         /**
          * <summary>An overridden ToString method which returns the with variable.</summary>
          *

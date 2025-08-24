@@ -3,7 +3,7 @@
     <PropertyGroup>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageId>NlpToolkit-MorphologicalAnalysis</PackageId>
-        <PackageVersion>1.0.24</PackageVersion>
+        <PackageVersion>1.0.25</PackageVersion>
         <TargetFramework>net8.0</TargetFramework>
     </PropertyGroup>
 

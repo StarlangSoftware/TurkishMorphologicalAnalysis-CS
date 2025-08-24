@@ -64,6 +64,8 @@ namespace Test
         [Test]
         public void MorphologicalAnalysisSpecialProperNoun()
         {
+            Assert.True(_fsm.MorphologicalAnalysis("uça").Size() != 0);
+            Assert.True(_fsm.MorphologicalAnalysis("koşarcasına").Size() != 0);
             Assert.True(_fsm.MorphologicalAnalysis("TL").Size() != 0);
             Assert.True(_fsm.MorphologicalAnalysis("Won'u").Size() != 0);
             Assert.True(_fsm.MorphologicalAnalysis("Slack'in").Size() != 0);
