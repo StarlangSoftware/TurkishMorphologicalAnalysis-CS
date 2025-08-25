@@ -148,23 +148,6 @@ namespace MorphologicalAnalysis
                 return false;
             }
 
-            if (currentFsmParse.GetVerbAgreement() != null && currentFsmParse.GetPossessiveAgreement() != null &&
-                _withName != null)
-            {
-                if (currentFsmParse.GetVerbAgreement() == "A3PL" && _withName == "^DB+VERB+ZERO+PRES+A1SG")
-                {
-                    return false;
-                }
-
-                if (currentFsmParse.GetVerbAgreement() == "A3SG" &&
-                    (currentFsmParse.GetPossessiveAgreement() == "P1SG" ||
-                     currentFsmParse.GetPossessiveAgreement() == "P2SG") &&
-                    _withName == "^DB+VERB+ZERO+PRES+A1PL")
-                {
-                    return false;
-                }
-            }
-
             return true;
         }
 
