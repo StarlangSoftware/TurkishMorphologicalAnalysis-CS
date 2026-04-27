@@ -23,6 +23,10 @@ In our morphological analyzer, finite state transducer is encoded in an xml file
 
 To overcome the irregularities and also to accelerate the search for the bareforms, we use a trie data structure in our morphological analyzer, and store all words in our lexicon in that data structure. For the regular words, we only store that word in our trie, whereas for irregular words we store both the original form and some prefix of that word. 
 
+Simple Web Interface
+============
+[Link 1](http://104.247.163.162/nlptoolkit/turkish-morphological-analysis.html) [Link 2](https://starlangsoftware.github.io/nlptoolkit-web-simple/turkish-morphological-analysis.html)
+
 Video Lectures
 ============
 
@@ -31,7 +35,7 @@ Video Lectures
 For Developers
 ============
 
-You can also see [Java](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis), [Python](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis-Py), [Cython](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis-Cy), [C](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis-C), [Swift](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis-Swift), [Js](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis-Js), or [C++](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis-CPP) repository.
+You can also see [Java](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis), [Python](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis-Py), [Cython](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis-Cy), [C](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis-C), [Swift](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis-Swift), [Js](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis-Js), [Php](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis-Php), or [C++](https://github.com/starlangsoftware/TurkishMorphologicalAnalysis-CPP) repository.
 
 ## Requirements
 
@@ -183,3 +187,63 @@ Output
     	doi = "10.26615/978-954-452-056-4_156",
     	pages = "1364--1372",
 	}
+
+For Contibutors
+============
+
+### Resources
+1. Add resources to the project directory. Do not forget to choose 'EmbeddedRecource' in 'Build Action' and 'Copy always' in 'Copy to output directory' in File Properties dialog. 
+   
+### C# files
+1. Do not forget to comment each function.
+```
+	/**
+	* <summary>Returns the first literal's name.</summary>
+	*
+	* <returns>the first literal's name.</returns>
+	*/
+	public string Representative()
+	{
+		return GetSynonym().GetLiteral(0).GetName();
+	}
+```
+2. Function names should follow pascal caml case.
+```
+	public string GetLongDefinition()
+```
+3. Write ToString methods, if necessary.
+4. Use var type as a standard type.
+```
+	public override bool Equals(object second)
+	{
+		var relation = (Relation) second;
+```
+5. Use standard naming for private and protected class variables. Use _ for private and capital for protected class members.
+```
+    public class SynSet
+    {
+        private string _id;
+		protected string Name;
+```
+6. Use NUnit for writing test classes. Use test setup if necessary.
+```
+   public class WordNetTest
+    {
+        WordNet.WordNet turkish;
+
+        [SetUp]
+        public void Setup()
+        {
+            turkish = new WordNet.WordNet();
+        }
+
+        [Test]
+        public void TestSynSetList()
+        {
+            var literalCount = 0;
+            foreach (var synSet in turkish.SynSetList()){
+                literalCount += synSet.GetSynonym().LiteralSize();
+            }
+            Assert.AreEqual(110259, literalCount);
+        }
+```
