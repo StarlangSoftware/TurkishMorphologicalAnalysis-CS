@@ -39,7 +39,7 @@ namespace Test
             Assert.AreEqual(2, parse1.Size());
             Assert.AreEqual(2, parse2.Size());
             Assert.AreEqual(6, parse3.Size());
-            Assert.AreEqual(4, parse4.Size());
+            Assert.AreEqual(5, parse4.Size());
             Assert.AreEqual(5, parse5.Size());
             Assert.AreEqual(12, parse6.Size());
             Assert.AreEqual(8, parse7.Size());
@@ -108,7 +108,7 @@ namespace Test
             Assert.AreEqual(1, parse1.ConstructParseListForDifferentRootWithPos().Count);
             Assert.AreEqual(2, parse2.ConstructParseListForDifferentRootWithPos().Count);
             Assert.AreEqual(5, parse3.ConstructParseListForDifferentRootWithPos().Count);
-            Assert.AreEqual(4, parse4.ConstructParseListForDifferentRootWithPos().Count);
+            Assert.AreEqual(5, parse4.ConstructParseListForDifferentRootWithPos().Count);
             Assert.AreEqual(5, parse5.ConstructParseListForDifferentRootWithPos().Count);
             Assert.AreEqual(7, parse6.ConstructParseListForDifferentRootWithPos().Count);
             Assert.AreEqual(2, parse7.ConstructParseListForDifferentRootWithPos().Count);
@@ -122,7 +122,7 @@ namespace Test
             Assert.AreEqual("P3SG+NOM$PNON+ACC", parse10.ParsesWithoutPrefixAndSuffix());
             Assert.AreEqual("A3PL+P3PL+NOM$A3PL+P3SG+NOM$A3PL+PNON+ACC$A3SG+P3PL+NOM",
                 parse11.ParsesWithoutPrefixAndSuffix());
-            Assert.AreEqual("DET$PRON+DEMONSP+A3SG+PNON+NOM$PRON+PERS+A3SG+PNON+NOM",
+            Assert.AreEqual("ADJ$DET$PRON+DEMONSP+A3SG+PNON+NOM$PRON+PERS+A3SG+PNON+NOM",
                 parse12.ParsesWithoutPrefixAndSuffix());
             Assert.AreEqual("NOUN^DB+ADJ+ALMOST$NOUN+A3SG+P3SG+NOM",
                 parse13.ParsesWithoutPrefixAndSuffix());

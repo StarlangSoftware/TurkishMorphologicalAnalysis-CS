@@ -14,7 +14,7 @@ namespace Test
             parse1 = fsm.MorphologicalAnalysis("açılır").GetFsmParse(0);
             parse2 = fsm.MorphologicalAnalysis("koparılarak").GetFsmParse(0);
             parse3 = fsm.MorphologicalAnalysis("toplama").GetFsmParse(0);
-            parse4 = fsm.MorphologicalAnalysis("değerlendirmede").GetFsmParse(0);
+            parse4 = fsm.MorphologicalAnalysis("değerlendirmede").GetFsmParse(1);
             parse5 = fsm.MorphologicalAnalysis("soruşturmasının").GetFsmParse(0);
             parse6 = fsm.MorphologicalAnalysis("karşılaştırmalı").GetFsmParse(0);
             parse7 = fsm.MorphologicalAnalysis("esaslarını").GetFsmParse(0);
